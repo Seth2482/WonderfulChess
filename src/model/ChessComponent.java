@@ -83,6 +83,7 @@ public abstract class ChessComponent extends JComponent {
         setLocation(point2);
         another.setChessboardPoint(chessboardPoint1);
         another.setLocation(point1);
+        System.out.printf("%d,%d swap location with %d %d\n",getChessboardPoint().getX(),getChessboardPoint().getY(),another.getChessboardPoint().getX(),another.getChessboardPoint().getY());
     }
 
     /**
