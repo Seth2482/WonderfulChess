@@ -20,10 +20,6 @@ public class RookChessComponent extends ChessComponent {
     private static Image ROOK_WHITE;
     private static Image ROOK_BLACK;
 
-    /**
-     * 车棋子对象自身的图片，是上面两种中的一种
-     */
-    private Image rookImage;
 
     /**
      * 读取加载车棋子的图片
@@ -51,9 +47,9 @@ public class RookChessComponent extends ChessComponent {
         try {
             loadResource();
             if (color == ChessColor.WHITE) {
-                rookImage = ROOK_WHITE;
+                trueImage = ROOK_WHITE;
             } else if (color == ChessColor.BLACK) {
-                rookImage = ROOK_BLACK;
+                trueImage = ROOK_BLACK;
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -96,22 +92,5 @@ public class RookChessComponent extends ChessComponent {
             return false;
         }
         return true;
-    }
-
-    /**
-     * 注意这个方法，每当窗体受到了形状的变化，或者是通知要进行绘图的时候，就会调用这个方法进行画图。
-     *
-     * @param g 可以类比于画笔
-     */
-    @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-//        g.drawImage(rookImage, 0, 0, getWidth() - 13, getHeight() - 20, this);
-        g.drawImage(rookImage, 0, 0, getWidth() , getHeight(), this);
-        g.setColor(Color.BLACK);
-        if (isSelected()) { // Highlights the model if selected.
-            g.setColor(Color.RED);
-            g.drawOval(0, 0, getWidth() , getHeight());
-        }
     }
 }

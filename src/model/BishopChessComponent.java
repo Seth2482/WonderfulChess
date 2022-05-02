@@ -12,8 +12,6 @@ public class BishopChessComponent extends ChessComponent {
     private static Image BISHOP_WHITE;
     private static Image BISHOP_BLACK;
 
-    private Image bishopImage;
-
     public void loadResource() throws IOException {
         if (BISHOP_WHITE == null) {
             BISHOP_WHITE = ImageIO.read(new File("./resource/images/bishop-white.png"));
@@ -28,9 +26,9 @@ public class BishopChessComponent extends ChessComponent {
         try {
             loadResource();
             if (color == ChessColor.WHITE) {
-                bishopImage = BISHOP_WHITE;
+                trueImage = BISHOP_WHITE;
             } else if (color == ChessColor.BLACK) {
-                bishopImage = BISHOP_BLACK;
+                trueImage = BISHOP_BLACK;
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -45,57 +43,26 @@ public class BishopChessComponent extends ChessComponent {
 
     public boolean canMoveTo(ChessComponent[][] chessComponents, ChessboardPoint destination) {
         ChessboardPoint source = getChessboardPoint();
+        boolean canGetThere = true;
 
-        int rowDifference = source.getX() - destination.getX();
-        int columnDifference = source.getY() - destination.getY();
+        int rowDifference = destination.getY() - source.getY();
+        int columnDifference = destination.getX() - source.getX();
 
+        // 检查是否在对角线上
         if (Math.abs(rowDifference) == Math.abs(columnDifference)) {
-            if (rowDifference > 0 && columnDifference > 0) {
-                for (int i = 1; i < rowDifference; i++) {
-                    if (!(chessComponents[destination.getX() + i][destination.getY() + i] instanceof EmptySlotComponent)) {
-                        return false;
-                    }
-                }
-            }
 
-            if (rowDifference < 0 & columnDifference < 0) {
-                for (int i = 1; i < -rowDifference; i++) {
-                    if (!(chessComponents[source.getX() + i][source.getY() + i] instanceof EmptySlotComponent)) {
-                        return false;
-                    }
-                }
-            }
-
-            if (rowDifference > 0 && columnDifference < 0) {
-                for (int i = 1; i < rowDifference; i++) {
-                    if (!(chessComponents[destination.getX() + i][destination.getY() - i] instanceof EmptySlotComponent)) {
-                        return false;
-                    }
-                }
-            }
-
-            if (rowDifference < 0 && columnDifference > 0) {
-                for (int i = 1; i < columnDifference; i++) {
-                    if (!(chessComponents[destination.getX() - i][destination.getY() + i] instanceof EmptySlotComponent)) {
-                        return false;
-                    }
+            // 检查是否有拦路棋
+            int xFactor = columnDifference > 0 ? 1 : -1;
+            int yFactor = rowDifference > 0 ? 1 : -1;
+            for (int i = 1; i < Math.abs(rowDifference); i++) {
+                if (!(chessComponents[source.getX() + xFactor * i][source.getY() + yFactor * i] instanceof EmptySlotComponent)) {
+                    canGetThere = false;
                 }
             }
         } else {
-            return false;
+            canGetThere = false;
         }
 
-        return true;
-    }
-
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        g.drawImage(bishopImage, 0, 0, getWidth(), getHeight(), this);
-        g.setColor(Color.BLACK);
-        if (isSelected()) { // Highlights the model if selected.
-            g.setColor(Color.RED);
-            g.drawOval(0, 0, getWidth(), getHeight());
-        }
-
+        return canGetThere;
     }
 }

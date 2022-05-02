@@ -16,7 +16,7 @@ public class ChessGameFrame extends JFrame {
     private GameController gameController;
 
     public ChessGameFrame(int width, int height) {
-        setTitle("2022 CS102A Project Demo"); //设置标题
+        setTitle("WonderfulChess"); //设置标题
         this.WIDTH = width;
         this.HEIGTH = height;
         this.CHESSBOARD_SIZE = HEIGTH * 4 / 5;
