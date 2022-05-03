@@ -62,12 +62,18 @@ public class PawnChessComponent extends ChessComponent {
             }//斜着吃子
 
             if (source.getX() - destination.getX() == factor && source.getY() == destination.getY()) {
+                if (!(chessComponents[destination.getX()][destination.getY()] instanceof EmptySlotComponent)) {
+                    return false;
+                }
                 isTheFirstMove = false;
                 return true;
             }
 
             if (source.getX() - destination.getX() == 2 * factor && source.getY() == destination.getY()) {
                 if (!(chessComponents[source.getX() - factor][source.getY()] instanceof EmptySlotComponent)) {
+                    return false;
+                }
+                if (!(chessComponents[destination.getX()][destination.getY()] instanceof EmptySlotComponent)) {
                     return false;
                 }
                 isTheFirstMove = false;
@@ -77,11 +83,9 @@ public class PawnChessComponent extends ChessComponent {
             return false;
         } else {
             if (!(chessComponents[destination.getX()][destination.getY()] instanceof EmptySlotComponent) && (destination.getX() == source.getX() - factor) && (destination.getY() == source.getY() + 1)) {
-                System.out.println("eat chess as cross");
                 return true;
             }
             if (!(chessComponents[destination.getX()][destination.getY()] instanceof EmptySlotComponent) && (destination.getX() == source.getX() - factor) && (destination.getY() == source.getY() - 1)) {
-                System.out.println("eat chess as cross");
                 return true;
             }//斜着吃子
             if (source.getY() != chessComponents.length - 1) {
@@ -99,7 +103,7 @@ public class PawnChessComponent extends ChessComponent {
                     }
                 }
             }//吃过路兵
-            return source.getX() - destination.getX() == factor && source.getY() == destination.getY();
+            return source.getX() - destination.getX() == factor && source.getY() == destination.getY()&&(chessComponents[source.getX() - factor][source.getY()] instanceof EmptySlotComponent);
         }
     }
 }
