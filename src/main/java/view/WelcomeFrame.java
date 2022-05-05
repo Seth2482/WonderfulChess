@@ -31,7 +31,6 @@ public class WelcomeFrame extends JFrame {
         });
     }
 
-
     private void createUIComponents() {
         // TODO: place custom component creation code here
         titlePanel = new GradientPanel("#F1F2B5", "#135058");
