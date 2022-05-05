@@ -3,9 +3,14 @@ package view;
 
 import model.*;
 import controller.ClickController;
+import model.KingChessComponent;
+import model.KnightChessComponent;
+import model.PawnChessComponent;
+import model.QueenChessComponent;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.*;
 import java.util.List;
 
 /**
@@ -26,10 +31,14 @@ public class Chessboard extends JComponent {
     private static final int CHESSBOARD_SIZE = 8;
 
     private final ChessComponent[][] chessComponents = new ChessComponent[CHESSBOARD_SIZE][CHESSBOARD_SIZE];
-    private ChessColor currentColor = ChessColor.BLACK;
+    private ChessColor currentColor = ChessColor.WHITE;
     //all chessComponents in this chessboard are shared only one model controller
     private final ClickController clickController = new ClickController(this);
     private final int CHESS_SIZE;
+    // 等待执行的任务列表
+    HashMap<String, Runnable> asyncTasks = new HashMap<String, Runnable>();
+    HashMap<String, Integer> asyncTasksSteps = new HashMap<String, Integer>();
+    protected static Chessboard chessboardInstance;
 
 
     public Chessboard(int width, int height) {
@@ -66,6 +75,8 @@ public class Chessboard extends JComponent {
             initPawnOnBoard(1, i, ChessColor.BLACK);
             initPawnOnBoard(CHESSBOARD_SIZE - 2, i, ChessColor.WHITE);
         }
+
+        chessboardInstance = this;
     }
 
     public ChessComponent[][] getChessComponents() {
@@ -101,7 +112,7 @@ public class Chessboard extends JComponent {
             }
         }
 
-        if (chess1.getChessboardPoint().getY() !=CHESSBOARD_SIZE-1) {
+        if (chess1.getChessboardPoint().getY() != CHESSBOARD_SIZE - 1) {
             if (chessComponents[chess1.getChessboardPoint().getX()][chess1.getChessboardPoint().getY() + 1] instanceof PawnChessComponent) {
                 if (((PawnChessComponent) chessComponents[chess1.getChessboardPoint().getX()][chess1.getChessboardPoint().getY() + 1]).isCanBeEnAsPassant() && chess2.getChessboardPoint().getY() == chess1.getChessboardPoint().getY() + 1) {
                     remove(chessComponents[chess1.getChessboardPoint().getX()][chess1.getChessboardPoint().getY() + 1]);
@@ -119,6 +130,8 @@ public class Chessboard extends JComponent {
 
         chess1.repaint();
         chess2.repaint();
+
+        checkAndInvoke();
     }
 
     public void initiateEmptyChessboard() {
@@ -183,5 +196,41 @@ public class Chessboard extends JComponent {
 
     public void loadGame(List<String> chessData) {
         chessData.forEach(System.out::println);
+    }
+
+    public void addAsyncTask(Runnable task, int steps) {
+        // 打标签
+        String uuid = UUID.randomUUID().toString();
+        asyncTasks.put(uuid, task);
+        asyncTasksSteps.put(uuid, steps);
+    }
+
+    public static void invokeLater(Runnable task, int steps) {
+        getChessboardInstance().addAsyncTask(task, steps);
+    }
+
+    private void checkAndInvoke() {
+
+        Iterator<Map.Entry<String, Integer>> iterator = asyncTasksSteps.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<String, Integer> entry = iterator.next();
+
+            String id = entry.getKey();
+            int steps = entry.getValue();
+            steps--;
+
+            if (steps <= 0) {
+                Runnable task = asyncTasks.get(id);
+                task.run();
+                iterator.remove();
+                asyncTasks.remove(id);
+            } else {
+                asyncTasksSteps.put(id, steps);
+            }
+        }
+    }
+
+    public static Chessboard getChessboardInstance() {
+        return chessboardInstance;
     }
 }

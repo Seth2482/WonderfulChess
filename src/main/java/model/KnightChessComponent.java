@@ -1,6 +1,8 @@
 package model;
 
 import controller.ClickController;
+import model.ChessColor;
+import model.ChessComponent;
 import view.ChessboardPoint;
 
 import javax.imageio.ImageIO;
@@ -8,17 +10,17 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 
-public class KnightChessComponent extends ChessComponent{
+public class KnightChessComponent extends ChessComponent {
     private static Image KNIGHT_WHITE;
     private static Image KNIGHT_BLACK;
 
     public void loadResource() throws IOException {
         if (KNIGHT_WHITE == null) {
-            KNIGHT_WHITE = ImageIO.read(new File("./resource/images/knight-white.png"));
+            KNIGHT_WHITE = getImage("images/knight-white.png");
         }
 
         if (KNIGHT_BLACK == null) {
-            KNIGHT_BLACK = ImageIO.read(new File("./resource/images/knight-black.png"));
+            KNIGHT_BLACK = getImage("images/knight-black.png");
         }
     }
 

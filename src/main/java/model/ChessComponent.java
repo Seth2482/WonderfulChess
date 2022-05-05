@@ -3,9 +3,12 @@ package model;
 import view.ChessboardPoint;
 import controller.ClickController;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 
 /**
@@ -83,7 +86,7 @@ public abstract class ChessComponent extends JComponent {
         setLocation(point2);
         another.setChessboardPoint(chessboardPoint1);
         another.setLocation(point1);
-        System.out.printf("%d,%d swap location with %d %d\n",getChessboardPoint().getX(),getChessboardPoint().getY(),another.getChessboardPoint().getX(),another.getChessboardPoint().getY());
+        System.out.printf("%d,%d swap location with %d %d\n", getChessboardPoint().getX(), getChessboardPoint().getY(), another.getChessboardPoint().getX(), another.getChessboardPoint().getY());
     }
 
     /**
@@ -118,8 +121,6 @@ public abstract class ChessComponent extends JComponent {
     public abstract void loadResource() throws IOException;
 
 
-
-
     /**
      * 注意这个方法，每当窗体受到了形状的变化，或者是通知要进行绘图的时候，就会调用这个方法进行画图。
      *
@@ -140,5 +141,9 @@ public abstract class ChessComponent extends JComponent {
             g.setColor(Color.RED);
             g.drawOval(0, 0, getWidth(), getHeight());
         }
+    }
+
+    protected BufferedImage getImage(String relativePath) throws IOException {
+        return ImageIO.read(new File(getClass().getClassLoader().getResource(relativePath).getFile()));
     }
 }

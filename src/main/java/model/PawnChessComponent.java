@@ -1,6 +1,7 @@
 package model;
 
 import controller.ClickController;
+import view.Chessboard;
 import view.ChessboardPoint;
 
 import javax.imageio.ImageIO;
@@ -22,11 +23,11 @@ public class PawnChessComponent extends ChessComponent {
 
     public void loadResource() throws IOException {
         if (PAWN_WHITE == null) {
-            PAWN_WHITE = ImageIO.read(new File("./resource/images/pawn-white.png"));
+            PAWN_WHITE = getImage("images/pawn-white.png");
         }
 
         if (PAWN_BLACK == null) {
-            PAWN_BLACK = ImageIO.read(new File("./resource/images/pawn-black.png"));
+            PAWN_BLACK = getImage("images/pawn-black.png");
         }
     }
 
@@ -72,6 +73,12 @@ public class PawnChessComponent extends ChessComponent {
                 }
                 isTheFirstMove = false;
                 canBeEnAsPassant = true;
+
+                // 对手下完棋后 这个棋就不能吃了
+                Chessboard.invokeLater(() -> {
+                    this.canBeEnAsPassant = false;
+                }, 2);
+
                 return true;
             }
             return false;
@@ -85,16 +92,16 @@ public class PawnChessComponent extends ChessComponent {
                 return true;
             }//斜着吃子
             if (source.getY() != chessComponents.length - 1) {
-                if (chessComponents[source.getX()][source.getY() + 1] instanceof PawnChessComponent && destination.getX() == source.getX() - factor && destination.getY() == source.getY() + 1 ) {
-                    if ( ((PawnChessComponent) chessComponents[source.getX()][source.getY() + 1]).canBeEnAsPassant){
+                if (chessComponents[source.getX()][source.getY() + 1] instanceof PawnChessComponent && destination.getX() == source.getX() - factor && destination.getY() == source.getY() + 1) {
+                    if (((PawnChessComponent) chessComponents[source.getX()][source.getY() + 1]).canBeEnAsPassant) {
                         return true;
                     }
                 }
             }
 
             if (source.getY() != 0) {
-                if (chessComponents[source.getX()][source.getY() - 1] instanceof PawnChessComponent && destination.getX() == source.getX() - factor && destination.getY() == source.getY() - 1 ) {
-                    if (((PawnChessComponent) chessComponents[source.getX()][source.getY() - 1]).canBeEnAsPassant){
+                if (chessComponents[source.getX()][source.getY() - 1] instanceof PawnChessComponent && destination.getX() == source.getX() - factor && destination.getY() == source.getY() - 1) {
+                    if (((PawnChessComponent) chessComponents[source.getX()][source.getY() - 1]).canBeEnAsPassant) {
                         return true;
                     }
                 }

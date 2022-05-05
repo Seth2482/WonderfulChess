@@ -1,6 +1,9 @@
 package model;
 
 import controller.ClickController;
+import model.ChessColor;
+import model.ChessComponent;
+import model.EmptySlotComponent;
 import view.ChessboardPoint;
 
 import javax.imageio.ImageIO;
@@ -14,11 +17,11 @@ public class QueenChessComponent extends ChessComponent {
 
     public void loadResource() throws IOException {
         if (QUEEN_WHITE == null) {
-            QUEEN_WHITE = ImageIO.read(new File("./resource/images/queen-white.png"));
+            QUEEN_WHITE = getImage("images/queen-white.png");
         }
 
         if (QUEEN_BLACK == null) {
-            QUEEN_BLACK = ImageIO.read(new File("./resource/images/queen-black.png"));
+            QUEEN_BLACK = getImage("images/queen-black.png");
         }
     }
 

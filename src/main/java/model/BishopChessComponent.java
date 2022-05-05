@@ -14,11 +14,11 @@ public class BishopChessComponent extends ChessComponent {
 
     public void loadResource() throws IOException {
         if (BISHOP_WHITE == null) {
-            BISHOP_WHITE = ImageIO.read(new File("./resource/images/bishop-white.png"));
+            BISHOP_WHITE = getImage("images/bishop-white.png");
         }
 
         if (BISHOP_BLACK == null) {
-            BISHOP_BLACK = ImageIO.read(new File("./resource/images/bishop-black.png"));
+            BISHOP_BLACK = getImage("images/bishop-black.png");
         }
     }
 

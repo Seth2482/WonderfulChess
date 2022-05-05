@@ -1,6 +1,6 @@
 package view;
 
-import view.Panels.TitlePanel;
+import view.Panels.GradientPanel;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -31,14 +31,9 @@ public class WelcomeFrame extends JFrame {
         });
     }
 
-    public void closeThis(){
-        dispose();
-    }
-
-
 
     private void createUIComponents() {
         // TODO: place custom component creation code here
-        titlePanel = new TitlePanel();
+        titlePanel = new GradientPanel("#F1F2B5", "#135058");
     }
 }
