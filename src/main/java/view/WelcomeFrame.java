@@ -17,6 +17,7 @@ public class WelcomeFrame extends JFrame {
         setContentPane(mainPanel);
         setSize(1000, 800);
         setLocationRelativeTo(null);
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         setTitle("Wonderful Chess - 玩得发棋");
         gameMode1.addActionListener(new ActionListener() {
@@ -24,15 +25,14 @@ public class WelcomeFrame extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 dispose();
                 SwingUtilities.invokeLater(() -> {
-                    ChessGameFrame mainFrame = new ChessGameFrame(1000, 760);
-                    mainFrame.setVisible(true);
+                    ArchiveFrame archiveFrame = new ArchiveFrame();
+                    archiveFrame.setVisible(true);
                 });
             }
         });
     }
 
     private void createUIComponents() {
-        // TODO: place custom component creation code here
         titlePanel = new GradientPanel("#F1F2B5", "#135058");
     }
 }

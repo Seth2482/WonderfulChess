@@ -1,12 +1,14 @@
 package view;
 
 
+import com.google.gson.Gson;
 import model.*;
 import controller.ClickController;
 import model.KingChessComponent;
 import model.KnightChessComponent;
 import model.PawnChessComponent;
 import model.QueenChessComponent;
+import store.archive.Archive;
 
 import javax.swing.*;
 import java.awt.*;
@@ -39,9 +41,10 @@ public class Chessboard extends JComponent {
     HashMap<String, Runnable> asyncTasks = new HashMap<String, Runnable>();
     HashMap<String, Integer> asyncTasksSteps = new HashMap<String, Integer>();
     protected static Chessboard chessboardInstance;
+    protected static Archive archive;
 
 
-    public Chessboard(int width, int height) {
+    public Chessboard(int width, int height, Archive archive) {
         setLayout(null); // Use absolute layout.
         setSize(width, height);
         CHESS_SIZE = width / 8;
@@ -77,6 +80,7 @@ public class Chessboard extends JComponent {
         }
 
         chessboardInstance = this;
+        this.archive = archive;
     }
 
     public ChessComponent[][] getChessComponents() {
@@ -132,6 +136,7 @@ public class Chessboard extends JComponent {
         chess2.repaint();
 
         checkAndInvoke();
+        archive.stepTrigger(this, chess1, chess2);
     }
 
     public void initiateEmptyChessboard() {
@@ -190,7 +195,7 @@ public class Chessboard extends JComponent {
     }
 
 
-    private Point calculatePoint(int row, int col) {
+    public Point calculatePoint(int row, int col) {
         return new Point(col * CHESS_SIZE, row * CHESS_SIZE);
     }
 
@@ -232,5 +237,17 @@ public class Chessboard extends JComponent {
 
     public static Chessboard getChessboardInstance() {
         return chessboardInstance;
+    }
+
+    public static Archive getArchive() {
+        return archive;
+    }
+
+    public ClickController getClickController() {
+        return clickController;
+    }
+
+    public int getCHESS_SIZE() {
+        return CHESS_SIZE;
     }
 }

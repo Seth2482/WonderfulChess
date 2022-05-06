@@ -21,6 +21,10 @@ public class PawnChessComponent extends ChessComponent {
         return canBeEnAsPassant;
     }
 
+    public boolean isTheFirstMove() {
+        return isTheFirstMove;
+    }
+
     public void loadResource() throws IOException {
         if (PAWN_WHITE == null) {
             PAWN_WHITE = getImage("images/pawn-white.png");
