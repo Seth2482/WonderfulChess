@@ -14,6 +14,13 @@ public class Archive {
     private ArrayList<Step> steps;
     private ChessColor currentColor;
 
+    public Archive() {
+        //TODO:: 删掉这些代码 实现正确的初始化
+        this.steps = new ArrayList<>();
+        this.createdAt = new Date();
+        this.name = "";
+        this.currentColor = ChessColor.WHITE;
+    }
 
     public void stepTrigger(Chessboard chessboard, ChessComponent chess1, ChessComponent chess2) {
         this.steps.add(
