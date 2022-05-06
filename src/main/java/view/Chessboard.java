@@ -98,6 +98,7 @@ public class Chessboard extends JComponent {
             remove(chessComponents[row][col]);
         }
         add(chessComponents[row][col] = chessComponent);
+        this.repaint();
     }
 
     public void swapChessComponents(ChessComponent chess1, ChessComponent chess2) {
@@ -187,6 +188,38 @@ public class Chessboard extends JComponent {
         putChessOnBoard(chessComponent);
     }
 
+    public void reInitialAll() {
+        initiateEmptyChessboard();
+
+        initRookOnBoard(0, 0, ChessColor.BLACK);
+        initRookOnBoard(0, CHESSBOARD_SIZE - 1, ChessColor.BLACK);
+        initRookOnBoard(CHESSBOARD_SIZE - 1, 0, ChessColor.WHITE);
+        initRookOnBoard(CHESSBOARD_SIZE - 1, CHESSBOARD_SIZE - 1, ChessColor.WHITE);
+
+        initBishopOnBoard(0, 2, ChessColor.BLACK);
+        initBishopOnBoard(0, CHESSBOARD_SIZE - 3, ChessColor.BLACK);
+        initBishopOnBoard(CHESSBOARD_SIZE - 1, 2, ChessColor.WHITE);
+        initBishopOnBoard(CHESSBOARD_SIZE - 1, CHESSBOARD_SIZE - 3, ChessColor.WHITE);
+
+        initKnightOnBoard(0, 1, ChessColor.BLACK);
+        initKnightOnBoard(0, CHESSBOARD_SIZE - 2, ChessColor.BLACK);
+        initKnightOnBoard(CHESSBOARD_SIZE - 1, 1, ChessColor.WHITE);
+        initKnightOnBoard(CHESSBOARD_SIZE - 1, CHESSBOARD_SIZE - 2, ChessColor.WHITE);
+
+        initQueenOnBoard(0, 3, ChessColor.BLACK);
+        initQueenOnBoard(CHESSBOARD_SIZE - 1, 3, ChessColor.WHITE);
+
+        initKingOnBoard(0, 4, ChessColor.BLACK);
+        initKingOnBoard(CHESSBOARD_SIZE - 1, 4, ChessColor.WHITE);
+
+        for (int i = 0; i < 8; i++) {
+            initPawnOnBoard(1, i, ChessColor.BLACK);
+            initPawnOnBoard(CHESSBOARD_SIZE - 2, i, ChessColor.WHITE);
+        }
+
+        this.currentColor = ChessColor.WHITE;
+    }
+
 
     @Override
     protected void paintComponent(Graphics g) {
@@ -250,4 +283,6 @@ public class Chessboard extends JComponent {
     public int getCHESS_SIZE() {
         return CHESS_SIZE;
     }
+
+
 }

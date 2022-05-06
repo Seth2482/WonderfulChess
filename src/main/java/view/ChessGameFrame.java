@@ -1,6 +1,7 @@
 package view;
 
 import controller.GameController;
+import model.ChessComponent;
 import store.archive.Archive;
 
 import javax.swing.*;
@@ -43,6 +44,7 @@ public class ChessGameFrame extends JFrame {
         gameController = new GameController(chessboard);
         chessboard.setLocation(HEIGTH / 10, HEIGTH / 10);
         add(chessboard);
+        this.repaint();
     }
 
     /**
@@ -61,8 +63,12 @@ public class ChessGameFrame extends JFrame {
      */
 
     private void addHelloButton() {
-        JButton button = new JButton("Show Hello Here");
-        button.addActionListener((e) -> JOptionPane.showMessageDialog(this, "Hello, world!"));
+        JButton button = new JButton("Restart Game");
+        button.addActionListener((e) -> {
+            SwingUtilities.invokeLater( ()-> {
+                Chessboard.chessboardInstance.reInitialAll();
+            });
+        });
         button.setLocation(HEIGTH, HEIGTH / 10 + 120);
         button.setSize(200, 60);
         button.setFont(new Font("Rockwell", Font.BOLD, 20));
@@ -78,7 +84,7 @@ public class ChessGameFrame extends JFrame {
 
         button.addActionListener(e -> {
             System.out.println("Click load");
-            String path = JOptionPane.showInputDialog(this,"Input Path here");
+            String path = JOptionPane.showInputDialog(this, "Input Path here");
             gameController.loadGameFromFile(path);
         });
     }

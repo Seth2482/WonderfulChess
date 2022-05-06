@@ -68,11 +68,17 @@ public class PawnChessComponent extends ChessComponent {
 
             if (source.getX() - destination.getX() == factor && source.getY() == destination.getY()) {
                 isTheFirstMove = false;
+                if (!(chessComponents[destination.getX()][destination.getY()] instanceof EmptySlotComponent)) {
+                    return false;
+                }
                 return true;
             }
 
             if (source.getX() - destination.getX() == 2 * factor && source.getY() == destination.getY()) {
                 if (!(chessComponents[source.getX() - factor][source.getY()] instanceof EmptySlotComponent)) {
+                    return false;
+                }
+                if (!(chessComponents[destination.getX()][destination.getY()] instanceof EmptySlotComponent)) {
                     return false;
                 }
                 isTheFirstMove = false;
@@ -110,7 +116,7 @@ public class PawnChessComponent extends ChessComponent {
                     }
                 }
             }//吃过路兵
-            return source.getX() - destination.getX() == factor && source.getY() == destination.getY();
+            return source.getX() - destination.getX() == factor && source.getY() == destination.getY()&&(chessComponents[destination.getX()][destination.getY()] instanceof EmptySlotComponent);
         }
     }
 }
