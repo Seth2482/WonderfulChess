@@ -1,6 +1,5 @@
 import mdlaf.MaterialLookAndFeel;
-import mdlaf.themes.JMarsDarkTheme;
-import view.WelcomeFrame;
+import View.WelcomeFrame;
 
 import javax.swing.*;
 import java.util.Locale;
