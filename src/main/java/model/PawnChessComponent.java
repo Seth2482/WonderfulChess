@@ -5,6 +5,7 @@ import view.Chessboard;
 import view.ChessboardPoint;
 
 import javax.imageio.ImageIO;
+import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
@@ -95,15 +96,33 @@ public class PawnChessComponent extends ChessComponent {
         } else {
             if (!(chessComponents[destination.getX()][destination.getY()] instanceof EmptySlotComponent) && (destination.getX() == source.getX() - factor) && (destination.getY() == source.getY() + 1)) {
                 System.out.println("eat chess as cross");
+                if (chessColor == ChessColor.WHITE && destination.getX() == 0) {
+                    new sideLineTransitionDialog(this);
+                }
+                if (chessColor == ChessColor.BLACK && destination.getX() == chessComponents.length - 1) {
+                    new sideLineTransitionDialog(this);
+                }
                 return true;
             }
             if (!(chessComponents[destination.getX()][destination.getY()] instanceof EmptySlotComponent) && (destination.getX() == source.getX() - factor) && (destination.getY() == source.getY() - 1)) {
                 System.out.println("eat chess as cross");
+                if (chessColor == ChessColor.WHITE && destination.getX() == 0) {
+                    new sideLineTransitionDialog(this);
+                }
+                if (chessColor == ChessColor.BLACK && destination.getX() == chessComponents.length - 1) {
+                    new sideLineTransitionDialog(this);
+                }
                 return true;
             }//斜着吃子
             if (source.getY() != chessComponents.length - 1) {
                 if (chessComponents[source.getX()][source.getY() + 1] instanceof PawnChessComponent && destination.getX() == source.getX() - factor && destination.getY() == source.getY() + 1) {
                     if (((PawnChessComponent) chessComponents[source.getX()][source.getY() + 1]).canBeEnAsPassant) {
+                        if (chessColor == ChessColor.WHITE && destination.getX() == 0) {
+                            new sideLineTransitionDialog(this);
+                        }
+                        if (chessColor == ChessColor.BLACK && destination.getX() == chessComponents.length - 1) {
+                            new sideLineTransitionDialog(this);
+                        }
                         return true;
                     }
                 }
@@ -112,12 +131,83 @@ public class PawnChessComponent extends ChessComponent {
             if (source.getY() != 0) {
                 if (chessComponents[source.getX()][source.getY() - 1] instanceof PawnChessComponent && destination.getX() == source.getX() - factor && destination.getY() == source.getY() - 1) {
                     if (((PawnChessComponent) chessComponents[source.getX()][source.getY() - 1]).canBeEnAsPassant) {
+                        if (chessColor == ChessColor.WHITE && destination.getX() == 0) {
+                            new sideLineTransitionDialog(this);
+                        }
+                        if (chessColor == ChessColor.BLACK && destination.getX() == chessComponents.length - 1) {
+                            new sideLineTransitionDialog(this);
+                        }
                         return true;
                     }
                 }
             }//吃过路兵
-            return source.getX() - destination.getX() == factor && source.getY() == destination.getY()&&(chessComponents[destination.getX()][destination.getY()] instanceof EmptySlotComponent);
+
+            if (source.getX() - destination.getX() == factor && source.getY() == destination.getY() && (chessComponents[destination.getX()][destination.getY()] instanceof EmptySlotComponent)) {
+                if (chessColor == ChessColor.WHITE && destination.getX() == 0) {
+                    new sideLineTransitionDialog(this);
+                }
+                if (chessColor == ChessColor.BLACK && destination.getX() == chessComponents.length - 1) {
+                    new sideLineTransitionDialog(this);
+                }
+                return true;
+            }
+
+            return true;
         }
+    }
+}
+
+class sideLineTransitionDialog extends JDialog {
+    sideLineTransitionDialog(PawnChessComponent pawn) {
+        setVisible(true);
+        setLayout(null);
+        setBounds(500, 300, 500, 150);
+
+        JLabel statusLabel = new JLabel("Which chess do you want your pawn to be?");
+        statusLabel.setLocation(90, 0);
+        statusLabel.setSize(400, 60);
+        statusLabel.setFont(new Font("Rockwell", Font.BOLD, 15));
+        add(statusLabel);
+
+        JButton buttonQueen = new JButton("Queen");
+        buttonQueen.setFont(new Font("Rockwell", Font.BOLD, 15));
+        buttonQueen.setLocation(60, 60);
+        buttonQueen.setSize(80, 30);
+        buttonQueen.addActionListener((e) -> {
+            Chessboard.getChessboardInstance().pawnTranslateToQueen(pawn);
+            this.dispose();
+        });
+        add(buttonQueen);
+
+        JButton buttonRook = new JButton("Rook");
+        buttonRook.setFont(new Font("Rockwell", Font.BOLD, 15));
+        buttonRook.setLocation(160, 60);
+        buttonRook.setSize(80, 30);
+        buttonRook.addActionListener((e) -> {
+            Chessboard.getChessboardInstance().pawnTranslateToRook(pawn);
+            this.dispose();
+        });
+        add(buttonRook);
+
+        JButton buttonKnight= new JButton("Knight");
+        buttonKnight.setFont(new Font("Rockwell", Font.BOLD, 15));
+        buttonKnight.setLocation(260, 60);
+        buttonKnight.setSize(80, 30);
+        buttonKnight.addActionListener((e) -> {
+            Chessboard.getChessboardInstance().pawnTranslateToKnight(pawn);
+            this.dispose();
+        });
+        add(buttonKnight);
+
+        JButton buttonBishop = new JButton("Bishop");
+        buttonBishop.setFont(new Font("Rockwell", Font.BOLD, 15));
+        buttonBishop.setLocation(360, 60);
+        buttonBishop.setSize(80, 30);
+        buttonBishop.addActionListener((e) -> {
+            Chessboard.getChessboardInstance().pawnTranslateToBishop(pawn);
+            this.dispose();
+        });
+        add(buttonBishop);
     }
 }
 
