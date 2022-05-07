@@ -30,7 +30,7 @@ public class ChessGameFrame extends JFrame {
 
 
         addChessboard();
-        Chessboard.chessboardInstance.setStatusLabelText("Current Color: "+Chessboard.chessboardInstance.getCurrentColor());
+        Chessboard.chessboardInstance.setStatusLabelText("Current Color: " + Chessboard.chessboardInstance.getCurrentColor().getName());
         addLabel();
         addHelloButton();
         addLoadButton();
