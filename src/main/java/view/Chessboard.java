@@ -42,7 +42,15 @@ public class Chessboard extends JComponent {
     HashMap<String, Integer> asyncTasksSteps = new HashMap<String, Integer>();
     protected static Chessboard chessboardInstance;
     protected static Archive archive;
+    private JLabel statusLabel = new JLabel();
 
+    public void setStatusLabelText(String text) {
+        this.statusLabel.setText(text);
+    }
+
+    public void setStatusLabel(JLabel statusLabel) {
+        this.statusLabel = statusLabel;
+    }
 
     public Chessboard(int width, int height, Archive archive) {
         setLayout(null); // Use absolute layout.
@@ -81,6 +89,7 @@ public class Chessboard extends JComponent {
 
         chessboardInstance = this;
         this.archive = archive;
+
     }
 
     public ChessComponent[][] getChessComponents() {
@@ -150,6 +159,8 @@ public class Chessboard extends JComponent {
 
     public void swapColor() {
         currentColor = currentColor == ChessColor.BLACK ? ChessColor.WHITE : ChessColor.BLACK;
+        statusLabel.setText("Current Color: " + currentColor);
+        statusLabel.repaint();
     }
 
     private void initRookOnBoard(int row, int col, ChessColor color) {
@@ -218,6 +229,7 @@ public class Chessboard extends JComponent {
         }
 
         this.currentColor = ChessColor.WHITE;
+        statusLabel.setText("Current Color: " + currentColor);
     }
 
 

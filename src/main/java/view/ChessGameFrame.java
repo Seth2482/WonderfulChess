@@ -30,6 +30,7 @@ public class ChessGameFrame extends JFrame {
 
 
         addChessboard();
+        Chessboard.chessboardInstance.setStatusLabelText("Current Color: "+Chessboard.chessboardInstance.getCurrentColor());
         addLabel();
         addHelloButton();
         addLoadButton();
@@ -41,6 +42,7 @@ public class ChessGameFrame extends JFrame {
      */
     private void addChessboard() {
         Chessboard chessboard = new Chessboard(CHESSBOARD_SIZE, CHESSBOARD_SIZE, new Archive());
+        chessboard.setStatusLabel(addLabel());
         gameController = new GameController(chessboard);
         chessboard.setLocation(HEIGTH / 10, HEIGTH / 10);
         add(chessboard);
@@ -50,12 +52,13 @@ public class ChessGameFrame extends JFrame {
     /**
      * 在游戏面板中添加标签
      */
-    private void addLabel() {
-        JLabel statusLabel = new JLabel("Sample label");
-        statusLabel.setLocation(HEIGTH, HEIGTH / 10);
-        statusLabel.setSize(200, 60);
+    private JLabel addLabel() {
+        JLabel statusLabel = new JLabel();
+        statusLabel.setLocation(HEIGTH - 30, HEIGTH / 10);
+        statusLabel.setSize(300, 60);
         statusLabel.setFont(new Font("Rockwell", Font.BOLD, 20));
         add(statusLabel);
+        return statusLabel;
     }
 
     /**
@@ -96,7 +99,7 @@ class MyDialog extends JDialog {
         setBounds(500, 300, 300, 150);
 
         JLabel statusLabel = new JLabel("Do you want to restart?");
-        statusLabel.setLocation(30,0);
+        statusLabel.setLocation(30, 0);
         statusLabel.setSize(300, 60);
         statusLabel.setFont(new Font("Rockwell", Font.BOLD, 20));
         add(statusLabel);
@@ -106,7 +109,7 @@ class MyDialog extends JDialog {
         buttonYes.setLocation(30, 60);
         buttonYes.setSize(100, 30);
         buttonYes.addActionListener((e) -> {
-           Chessboard.chessboardInstance.reInitialAll();
+            Chessboard.chessboardInstance.reInitialAll();
             this.dispose();
         });
         add(buttonYes);
