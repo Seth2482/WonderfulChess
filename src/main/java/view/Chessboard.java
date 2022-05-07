@@ -1,7 +1,6 @@
 package view;
 
 
-import com.google.gson.Gson;
 import model.*;
 import controller.ClickController;
 import model.KingChessComponent;
@@ -41,7 +40,7 @@ public class Chessboard extends JComponent {
     HashMap<String, Runnable> asyncTasks = new HashMap<String, Runnable>();
     HashMap<String, Integer> asyncTasksSteps = new HashMap<String, Integer>();
     protected static Chessboard chessboardInstance;
-    protected static Archive archive;
+    protected Archive archive;
     private JLabel statusLabel = new JLabel();
 
     public void setStatusLabelText(String text) {
@@ -60,36 +59,23 @@ public class Chessboard extends JComponent {
 
         initiateEmptyChessboard();
 
-        // FIXME: Initialize chessboard for testing only.
-        initRookOnBoard(0, 0, ChessColor.BLACK);
-        initRookOnBoard(0, CHESSBOARD_SIZE - 1, ChessColor.BLACK);
-        initRookOnBoard(CHESSBOARD_SIZE - 1, 0, ChessColor.WHITE);
-        initRookOnBoard(CHESSBOARD_SIZE - 1, CHESSBOARD_SIZE - 1, ChessColor.WHITE);
-
-        initBishopOnBoard(0, 2, ChessColor.BLACK);
-        initBishopOnBoard(0, CHESSBOARD_SIZE - 3, ChessColor.BLACK);
-        initBishopOnBoard(CHESSBOARD_SIZE - 1, 2, ChessColor.WHITE);
-        initBishopOnBoard(CHESSBOARD_SIZE - 1, CHESSBOARD_SIZE - 3, ChessColor.WHITE);
-
-        initKnightOnBoard(0, 1, ChessColor.BLACK);
-        initKnightOnBoard(0, CHESSBOARD_SIZE - 2, ChessColor.BLACK);
-        initKnightOnBoard(CHESSBOARD_SIZE - 1, 1, ChessColor.WHITE);
-        initKnightOnBoard(CHESSBOARD_SIZE - 1, CHESSBOARD_SIZE - 2, ChessColor.WHITE);
-
-        initQueenOnBoard(0, 3, ChessColor.BLACK);
-        initQueenOnBoard(CHESSBOARD_SIZE - 1, 3, ChessColor.WHITE);
-
-        initKingOnBoard(0, 4, ChessColor.BLACK);
-        initKingOnBoard(CHESSBOARD_SIZE - 1, 4, ChessColor.WHITE);
-
-        for (int i = 0; i < 8; i++) {
-            initPawnOnBoard(1, i, ChessColor.BLACK);
-            initPawnOnBoard(CHESSBOARD_SIZE - 2, i, ChessColor.WHITE);
-        }
-
         chessboardInstance = this;
         this.archive = archive;
 
+        recoverFromArchive();
+    }
+
+    public Chessboard(int width, int height) {
+        setLayout(null); // Use absolute layout.
+        setSize(width, height);
+        CHESS_SIZE = width / 8;
+        System.out.printf("chessboard size = %d, chess size = %d\n", width, CHESS_SIZE);
+        chessboardInstance = this;
+
+        archive = new Archive();
+        archive.initialize();
+
+        initialAllChess();
     }
 
     public ChessComponent[][] getChessComponents() {
@@ -159,7 +145,7 @@ public class Chessboard extends JComponent {
 
     public void swapColor() {
         currentColor = currentColor == ChessColor.BLACK ? ChessColor.WHITE : ChessColor.BLACK;
-        statusLabel.setText("Current Color: " + currentColor);
+        statusLabel.setText("Current Color: " + currentColor.getName());
         statusLabel.repaint();
     }
 
@@ -199,7 +185,7 @@ public class Chessboard extends JComponent {
         putChessOnBoard(chessComponent);
     }
 
-    public void reInitialAll() {
+    public void initialAllChess() {
         initiateEmptyChessboard();
 
         initRookOnBoard(0, 0, ChessColor.BLACK);
@@ -229,7 +215,14 @@ public class Chessboard extends JComponent {
         }
 
         this.currentColor = ChessColor.WHITE;
-        statusLabel.setText("Current Color: " + currentColor);
+        statusLabel.setText("Current Color: " + currentColor.getName());
+
+        archive.initialize();
+
+        ChessGameFrame.getInstance().setSaveButtonEnabled(false);
+        addAsyncTask(() -> {
+            ChessGameFrame.getInstance().setSaveButtonEnabled(true);
+        }, 1);
     }
 
 
@@ -256,7 +249,7 @@ public class Chessboard extends JComponent {
     }
 
     public static void invokeLater(Runnable task, int steps) {
-        getChessboardInstance().addAsyncTask(task, steps);
+        getInstance().addAsyncTask(task, steps);
     }
 
     private void checkAndInvoke() {
@@ -280,11 +273,27 @@ public class Chessboard extends JComponent {
         }
     }
 
-    public static Chessboard getChessboardInstance() {
+    private void recoverFromArchive() {
+        ChessComponent[][] chessComponents = archive.getChessComponents();
+
+        for (int m = 0; m < chessComponents.length; m++) {
+            for (int n = 0; n < chessComponents[m].length; n++) {
+                ChessComponent chessComponent = chessComponents[m][n];
+                chessComponent.setVisible(true);
+                putChessOnBoard(chessComponent);
+            }
+        }
+
+        this.currentColor = archive.getCurrentColor();
+        ChessGameFrame.getInstance().setSaveButtonEnabled(true);
+
+    }
+
+    public static Chessboard getInstance() {
         return chessboardInstance;
     }
 
-    public static Archive getArchive() {
+    public Archive getArchive() {
         return archive;
     }
 

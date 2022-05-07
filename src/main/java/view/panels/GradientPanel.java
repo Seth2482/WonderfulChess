@@ -1,4 +1,4 @@
-package view.Panels;
+package view.panels;
 
 import javax.swing.*;
 import java.awt.*;

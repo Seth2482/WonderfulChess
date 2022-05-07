@@ -1,10 +1,16 @@
 package store.archive;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.sun.source.tree.BreakTree;
 import model.ChessColor;
 import model.ChessComponent;
+import store.archive.dataModels.ChessDataModel;
+import store.archive.dataModels.ChessDataModelDeserializer;
 import view.Chessboard;
 
+import java.io.*;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -13,13 +19,10 @@ public class Archive {
     private String name;
     private ArrayList<Step> steps;
     private ChessColor currentColor;
+    private String path;
 
     public Archive() {
-        //TODO:: 删掉这些代码 实现正确的初始化
-        this.steps = new ArrayList<>();
-        this.createdAt = new Date();
-        this.name = "";
-        this.currentColor = ChessColor.WHITE;
+        createdAt = new Date();
     }
 
     public void stepTrigger(Chessboard chessboard, ChessComponent chess1, ChessComponent chess2) {
@@ -35,6 +38,17 @@ public class Archive {
     }
 
     public void save() {
+        if (isFresh())
+            return;
+
+        File file = new File(path);
+        try {
+            FileWriter fileWriter = new FileWriter(file);
+            fileWriter.write(this.toString());
+            fileWriter.close();
+        } catch (IOException e) {
+            System.out.println("Failed to save archive.");
+        }
 
     }
 
@@ -47,4 +61,60 @@ public class Archive {
         return lastStep.getChessComponents();
     }
 
+    public void initialize() {
+        this.steps = new ArrayList<>();
+        this.createdAt = new Date();
+        this.currentColor = ChessColor.WHITE;
+    }
+
+    public static Gson getGson() {
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.registerTypeAdapter(ChessDataModel.class, new ChessDataModelDeserializer());
+        return gsonBuilder.create();
+    }
+
+    public static Archive getArchiveFromPath(String path) {
+        try {
+            //TODO:: Validate
+            BufferedReader in = new BufferedReader(new FileReader(path));
+            return getGson().fromJson(in, Archive.class);
+
+        } catch (FileNotFoundException e) {
+            // Return Null Archive
+            return null;
+        }
+    }
+
+    public boolean isEmpty() {
+        return steps.size() < 1;
+    }
+
+    public Step lastStep() {
+        if (isEmpty()) return null;
+        return steps.get(steps.size() - 1);
+    }
+
+    public ChessComponent[][] getChessComponents() {
+        if (!isEmpty()) {
+            return lastStep().getChessComponents();
+        } else {
+            return null;
+        }
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
+
+    public boolean isFresh() {
+        return this.path == null;
+    }
+
+    public ChessColor getCurrentColor() {
+        return currentColor;
+    }
 }

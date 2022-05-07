@@ -1,8 +1,11 @@
 package view;
 
-import view.Panels.GradientPanel;
+import store.archive.Archive;
+import view.panels.GradientPanel;
 
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileFilter;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -40,9 +43,9 @@ public class ArchiveFrame extends JFrame {
                 chooser.setFileFilter(new FileFilter() {
                     @Override
                     public boolean accept(File f) {
-                        if(f.getName().toLowerCase(Locale.ROOT).endsWith(".wdfc.json")){
+                        if (f.getName().toLowerCase(Locale.ROOT).endsWith(".wdfc.json")) {
                             return true;
-                        }else {
+                        } else {
                             return false;
                         }
                     }
@@ -55,8 +58,7 @@ public class ArchiveFrame extends JFrame {
 
                 if (chooser.showOpenDialog(instance) == JFileChooser.APPROVE_OPTION) {
                     archivePath.setText(chooser.getSelectedFile().getAbsolutePath());
-                }
-                else {
+                } else {
                     System.out.println("No Selection ");
                 }
             }
@@ -69,6 +71,38 @@ public class ArchiveFrame extends JFrame {
                 dispose();
                 ChessGameFrame mainFrame = new ChessGameFrame(1000, 760);
                 mainFrame.setVisible(true);
+
+
+            }
+        });
+        confirm.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                // Get Archive
+                //TODO:: Validate the archive
+                Archive archive = Archive.getArchiveFromPath(archivePath.getText());
+                dispose();
+                ChessGameFrame mainFrame = new ChessGameFrame(1000, 760, archive);
+                mainFrame.setVisible(true);
+
+            }
+        });
+        archivePath.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                changedUpdate(e);
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                changedUpdate(e);
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                boolean enabled = archivePath.getText().endsWith(".wdfc.json");
+                confirm.setEnabled(enabled);
             }
         });
     }
