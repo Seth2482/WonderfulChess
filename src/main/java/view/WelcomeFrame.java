@@ -1,6 +1,6 @@
 package view;
 
-import view.Panels.GradientPanel;
+import view.panels.GradientPanel;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;

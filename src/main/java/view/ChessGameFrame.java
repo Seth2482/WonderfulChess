@@ -1,8 +1,9 @@
 package view;
 
 import controller.GameController;
-import model.ChessComponent;
 import store.archive.Archive;
+import view.dialogs.ChoosePathDialog;
+import view.dialogs.RestartDialog;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,28 +13,50 @@ import java.awt.*;
  */
 public class ChessGameFrame extends JFrame {
     //    public final Dimension FRAME_SIZE ;
-    private final int WIDTH;
-    private final int HEIGTH;
-    public final int CHESSBOARD_SIZE;
+    private int WIDTH;
+    private int HEIGHT;
+    public int CHESSBOARD_SIZE;
     private GameController gameController;
+    // 只作中间变量 实际的请以Chessboard的为准
+    private JButton saveButton;
+    private JLabel statusLabel;
+    private static ChessGameFrame instance;
 
     public ChessGameFrame(int width, int height) {
+        basicInitialize(width, height);
+
+        // 不要改代码的顺序 不然会很难收场！！
+        // 已经成屎山代码了
+        addSaveButton();
+        addLabel();
+        addChessboard();
+        Chessboard.getInstance().setStatusLabelText("Current Color: " + Chessboard.chessboardInstance.getCurrentColor().getName());
+        addRestartButton();
+
+
+    }
+
+    public ChessGameFrame(int width, int height, Archive archive) {
+        basicInitialize(width, height);
+
+        addSaveButton();
+        addLabel();
+        addChessboard(archive);
+        Chessboard.getInstance().setStatusLabelText("Current Color: " + Chessboard.chessboardInstance.getCurrentColor().getName());
+        addRestartButton();
+    }
+
+    private void basicInitialize(int width, int height) {
         setTitle("WonderfulChess"); //设置标题
         this.WIDTH = width;
-        this.HEIGTH = height;
-        this.CHESSBOARD_SIZE = HEIGTH * 4 / 5;
+        this.HEIGHT = height;
+        this.CHESSBOARD_SIZE = HEIGHT * 4 / 5;
+        this.instance = this;
 
-        setSize(WIDTH, HEIGTH);
+        setSize(WIDTH, HEIGHT);
         setLocationRelativeTo(null); // Center the window.
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE); //设置程序关闭按键，如果点击右上方的叉就游戏全部关闭了
         setLayout(null);
-
-
-        addChessboard();
-        Chessboard.chessboardInstance.setStatusLabelText("Current Color: " + Chessboard.chessboardInstance.getCurrentColor().getName());
-        addLabel();
-        addHelloButton();
-        addLoadButton();
     }
 
 
@@ -41,10 +64,19 @@ public class ChessGameFrame extends JFrame {
      * 在游戏面板中添加棋盘
      */
     private void addChessboard() {
-        Chessboard chessboard = new Chessboard(CHESSBOARD_SIZE, CHESSBOARD_SIZE, new Archive());
-        chessboard.setStatusLabel(addLabel());
+        Chessboard chessboard = new Chessboard(CHESSBOARD_SIZE, CHESSBOARD_SIZE);
+        chessboard.setStatusLabel(this.statusLabel);
         gameController = new GameController(chessboard);
-        chessboard.setLocation(HEIGTH / 10, HEIGTH / 10);
+        chessboard.setLocation(HEIGHT / 10, HEIGHT / 10);
+        add(chessboard);
+        this.repaint();
+    }
+
+    private void addChessboard(Archive archive) {
+        Chessboard chessboard = new Chessboard(CHESSBOARD_SIZE, CHESSBOARD_SIZE, archive);
+        chessboard.setStatusLabel(this.statusLabel);
+        gameController = new GameController(chessboard);
+        chessboard.setLocation(HEIGHT / 10, HEIGHT / 10);
         add(chessboard);
         this.repaint();
     }
@@ -53,8 +85,8 @@ public class ChessGameFrame extends JFrame {
      * 在游戏面板中添加标签
      */
     private JLabel addLabel() {
-        JLabel statusLabel = new JLabel();
-        statusLabel.setLocation(HEIGTH - 30, HEIGTH / 10);
+        statusLabel = new JLabel();
+        statusLabel.setLocation(HEIGHT - 30, HEIGHT / 10);
         statusLabel.setSize(300, 60);
         statusLabel.setFont(new Font("Rockwell", Font.BOLD, 20));
         add(statusLabel);
@@ -65,62 +97,44 @@ public class ChessGameFrame extends JFrame {
      * 在游戏面板中增加一个按钮，如果按下的话就会显示Hello, world!
      */
 
-    private void addHelloButton() {
+    private void addRestartButton() {
         JButton button = new JButton("Restart Game");
         button.addActionListener((e) -> {
-            new MyDialog();
+            new RestartDialog();
         });
-        button.setLocation(HEIGTH, HEIGTH / 10 + 120);
+        button.setLocation(HEIGHT, HEIGHT / 10 + 120);
         button.setSize(200, 60);
         button.setFont(new Font("Rockwell", Font.BOLD, 20));
         add(button);
     }
 
-    private void addLoadButton() {
-        JButton button = new JButton("Load");
-        button.setLocation(HEIGTH, HEIGTH / 10 + 240);
-        button.setSize(200, 60);
-        button.setFont(new Font("Rockwell", Font.BOLD, 20));
-        add(button);
+    private void addSaveButton() {
+        saveButton = new JButton("Save");
+        saveButton.setEnabled(false);
+        saveButton.setLocation(HEIGHT, HEIGHT / 10 + 240);
+        saveButton.setSize(200, 60);
+        saveButton.setFont(new Font("Rockwell", Font.BOLD, 20));
+        add(saveButton);
 
-        button.addActionListener(e -> {
-            System.out.println("Click load");
-            String path = JOptionPane.showInputDialog(this, "Input Path here");
-            gameController.loadGameFromFile(path);
+        saveButton.addActionListener(e -> {
+            Archive archive = Chessboard.getInstance().getArchive();
+            if (archive.isFresh()) {
+                ChoosePathDialog choosePathDialog = new ChoosePathDialog();
+                choosePathDialog.setVisible(true);
+            } else {
+                archive.save();
+                JOptionPane.showMessageDialog(Chessboard.getInstance(), "Your archive has been saved!");
+            }
         });
+
     }
 
-}
+    public void setSaveButtonEnabled(Boolean enabled) {
+        saveButton.setEnabled(enabled);
+    }
 
-class MyDialog extends JDialog {
-    public MyDialog() {
-        setVisible(true);
-        setLayout(null);
-        setBounds(500, 300, 300, 150);
-
-        JLabel statusLabel = new JLabel("Do you want to restart?");
-        statusLabel.setLocation(30, 0);
-        statusLabel.setSize(300, 60);
-        statusLabel.setFont(new Font("Rockwell", Font.BOLD, 20));
-        add(statusLabel);
-
-        JButton buttonYes = new JButton("Yes");
-        buttonYes.setFont(new Font("Rockwell", Font.BOLD, 20));
-        buttonYes.setLocation(30, 60);
-        buttonYes.setSize(100, 30);
-        buttonYes.addActionListener((e) -> {
-            Chessboard.chessboardInstance.reInitialAll();
-            this.dispose();
-        });
-        add(buttonYes);
-
-        JButton buttonNo = new JButton("No");
-        buttonNo.setFont(new Font("Rockwell", Font.BOLD, 20));
-        buttonNo.setLocation(150, 60);
-        buttonNo.setSize(100, 30);
-        buttonNo.addActionListener((e) -> {
-            this.dispose();
-        });
-        add(buttonNo);
+    public static ChessGameFrame getInstance() {
+        return instance;
     }
 }
+
