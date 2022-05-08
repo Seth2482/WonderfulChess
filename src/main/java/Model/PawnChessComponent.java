@@ -72,7 +72,6 @@ public class PawnChessComponent extends ChessComponent {
             }//斜着吃子
 
             if (source.getX() - destination.getX() == factor && source.getY() == destination.getY()) {
-//                isTheFirstMove = false;
                 if (!(chessComponents[destination.getX()][destination.getY()] instanceof EmptySlotComponent)) {
                     return false;
                 }
@@ -86,7 +85,6 @@ public class PawnChessComponent extends ChessComponent {
                 if (!(chessComponents[destination.getX()][destination.getY()] instanceof EmptySlotComponent)) {
                     return false;
                 }
-//                isTheFirstMove = false;
                 canBeEnAsPassant = true;
 
                 // 对手下完棋后 这个棋就不能吃了
@@ -100,33 +98,15 @@ public class PawnChessComponent extends ChessComponent {
         } else {
             if (!(chessComponents[destination.getX()][destination.getY()] instanceof EmptySlotComponent) && (destination.getX() == source.getX() - factor) && (destination.getY() == source.getY() + 1)) {
                 System.out.println("eat chess as cross");
-                if (chessColor == ChessColor.WHITE && destination.getX() == 0) {
-                    new sideLineTransitionDialog(this);
-                }
-                if (chessColor == ChessColor.BLACK && destination.getX() == chessComponents.length - 1) {
-                    new sideLineTransitionDialog(this);
-                }
                 return true;
             }
             if (!(chessComponents[destination.getX()][destination.getY()] instanceof EmptySlotComponent) && (destination.getX() == source.getX() - factor) && (destination.getY() == source.getY() - 1)) {
                 System.out.println("eat chess as cross");
-                if (chessColor == ChessColor.WHITE && destination.getX() == 0) {
-                    new sideLineTransitionDialog(this);
-                }
-                if (chessColor == ChessColor.BLACK && destination.getX() == chessComponents.length - 1) {
-                    new sideLineTransitionDialog(this);
-                }
                 return true;
             }//斜着吃子
             if (source.getY() != chessComponents.length - 1) {
                 if (chessComponents[source.getX()][source.getY() + 1] instanceof PawnChessComponent && destination.getX() == source.getX() - factor && destination.getY() == source.getY() + 1) {
                     if (((PawnChessComponent) chessComponents[source.getX()][source.getY() + 1]).canBeEnAsPassant) {
-                        if (chessColor == ChessColor.WHITE && destination.getX() == 0) {
-                            new sideLineTransitionDialog(this);
-                        }
-                        if (chessColor == ChessColor.BLACK && destination.getX() == chessComponents.length - 1) {
-                            new sideLineTransitionDialog(this);
-                        }
                         return true;
                     }
                 }
@@ -135,29 +115,21 @@ public class PawnChessComponent extends ChessComponent {
             if (source.getY() != 0) {
                 if (chessComponents[source.getX()][source.getY() - 1] instanceof PawnChessComponent && destination.getX() == source.getX() - factor && destination.getY() == source.getY() - 1) {
                     if (((PawnChessComponent) chessComponents[source.getX()][source.getY() - 1]).canBeEnAsPassant) {
-                        if (chessColor == ChessColor.WHITE && destination.getX() == 0) {
-                            new sideLineTransitionDialog(this);
-                        }
-                        if (chessColor == ChessColor.BLACK && destination.getX() == chessComponents.length - 1) {
-                            new sideLineTransitionDialog(this);
-                        }
                         return true;
                     }
                 }
             }//吃过路兵
 
             if (source.getX() - destination.getX() == factor && source.getY() == destination.getY() && (chessComponents[destination.getX()][destination.getY()] instanceof EmptySlotComponent)) {
-                if (chessColor == ChessColor.WHITE && destination.getX() == 0) {
-                    new sideLineTransitionDialog(this);
-                }
-                if (chessColor == ChessColor.BLACK && destination.getX() == chessComponents.length - 1) {
-                    new sideLineTransitionDialog(this);
-                }
                 return true;
             }
 
             return false;
         }
+    }
+
+    public void showDialog() {
+        new sideLineTransitionDialog(this);
     }
 }
 
@@ -193,7 +165,7 @@ class sideLineTransitionDialog extends JDialog {
         });
         add(buttonRook);
 
-        JButton buttonKnight= new JButton("Knight");
+        JButton buttonKnight = new JButton("Knight");
         buttonKnight.setFont(new Font("Rockwell", Font.BOLD, 15));
         buttonKnight.setLocation(260, 60);
         buttonKnight.setSize(80, 30);

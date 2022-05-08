@@ -1,6 +1,7 @@
 package Controller;
 
 
+import Model.ChessColor;
 import Model.ChessComponent;
 import Model.PawnChessComponent;
 import View.Chessboard;
@@ -20,7 +21,7 @@ public class ClickController {
                 chessComponent.setSelected(true);
                 first = chessComponent;
 
-                for (int i = 0; i < 8; i++) {
+                for (int i = 0; i < 8; i++) {//遍历哪一个can move to
                     for (int j = 0; j < 8; j++) {
                         if ((first.canMoveTo(chessboard.getChessComponents(), new ChessboardPoint(i, j))) && (!chessboard.getChessComponents()[i][j].getChessColor().equals(first.getChessColor()))) {
                             chessboard.getChessComponents()[i][j].setCanBeMoveTo(true);
@@ -39,7 +40,7 @@ public class ClickController {
                 first = null;
                 recordFirst.repaint();
 
-                for (int i = 0; i < 8; i++) {
+                for (int i = 0; i < 8; i++) {//遍历哪一个can move to
                     for (int j = 0; j < 8; j++) {
                         if (chessboard.getChessComponents()[i][j].isCanBeMoveTo()) {
                             chessboard.getChessComponents()[i][j].setCanBeMoveTo(false);
@@ -55,11 +56,20 @@ public class ClickController {
                 }
                 //repaint in swap chess method.
                 chessboard.swapChessComponents(first, chessComponent);
+
+                if (first instanceof PawnChessComponent && first.getChessboardPoint().getX() == 0 && first.getChessColor() == ChessColor.WHITE) {
+                    ((PawnChessComponent) first).showDialog();
+                }
+                if (first instanceof PawnChessComponent && first.getChessboardPoint().getX() == 7 && first.getChessColor() == ChessColor.BLACK) {
+                    ((PawnChessComponent) first).showDialog();
+                }
+
                 chessboard.swapColor();
 
                 first.setSelected(false);
                 first = null;
-                for (int i = 0; i < 8; i++) {
+
+                for (int i = 0; i < 8; i++) {//遍历哪一个can move to
                     for (int j = 0; j < 8; j++) {
                         if (chessboard.getChessComponents()[i][j].isCanBeMoveTo()) {
                             chessboard.getChessComponents()[i][j].setCanBeMoveTo(false);
