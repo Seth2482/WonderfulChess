@@ -43,6 +43,15 @@ public abstract class ChessComponent extends JComponent {
     private ChessboardPoint chessboardPoint;
     protected final ChessColor chessColor;
     private boolean selected;
+    private boolean canBeMoveTo;
+
+    public void setCanBeMoveTo(boolean canBeMoveTo) {
+        this.canBeMoveTo = canBeMoveTo;
+    }
+
+    public boolean isCanBeMoveTo() {
+        return canBeMoveTo;
+    }
 
     protected ChessComponent(ChessboardPoint chessboardPoint, Point location, ChessColor chessColor, ClickController clickController, int size) {
         enableEvents(AWTEvent.MOUSE_EVENT_MASK);
@@ -141,6 +150,16 @@ public abstract class ChessComponent extends JComponent {
             g.setColor(Color.RED);
             g.drawOval(0, 0, getWidth(), getHeight());
         }
+
+        if (canBeMoveTo) { // Highlights the model if selected.
+            g.setColor(Color.GREEN);
+            g.drawOval(0, 0, getWidth(), getHeight());
+        }
+
+    }
+
+    public void legalMoveDraw(Graphics g) {
+
     }
 
     protected BufferedImage getImage(String relativePath) throws IOException {

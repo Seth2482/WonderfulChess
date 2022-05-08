@@ -18,6 +18,10 @@ public class PawnChessComponent extends ChessComponent {
     private boolean isTheFirstMove = true;//是否是第一步
     private boolean canBeEnAsPassant = false;//能否被别人当作过路兵吃掉
 
+    public void setTheFirstMove(boolean theFirstMove) {
+        isTheFirstMove = theFirstMove;
+    }
+
     public boolean isCanBeEnAsPassant() {
         return canBeEnAsPassant;
     }
@@ -68,7 +72,7 @@ public class PawnChessComponent extends ChessComponent {
             }//斜着吃子
 
             if (source.getX() - destination.getX() == factor && source.getY() == destination.getY()) {
-                isTheFirstMove = false;
+//                isTheFirstMove = false;
                 if (!(chessComponents[destination.getX()][destination.getY()] instanceof EmptySlotComponent)) {
                     return false;
                 }
@@ -82,7 +86,7 @@ public class PawnChessComponent extends ChessComponent {
                 if (!(chessComponents[destination.getX()][destination.getY()] instanceof EmptySlotComponent)) {
                     return false;
                 }
-                isTheFirstMove = false;
+//                isTheFirstMove = false;
                 canBeEnAsPassant = true;
 
                 // 对手下完棋后 这个棋就不能吃了
@@ -152,7 +156,7 @@ public class PawnChessComponent extends ChessComponent {
                 return true;
             }
 
-            return true;
+            return false;
         }
     }
 }
