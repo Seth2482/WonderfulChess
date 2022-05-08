@@ -8,6 +8,7 @@ import Model.KnightChessComponent;
 import Model.PawnChessComponent;
 import Model.QueenChessComponent;
 import Archive.Archive;
+import View.Dialog.KingAttackedDialog;
 
 import javax.swing.*;
 import java.awt.*;
@@ -42,6 +43,52 @@ public class Chessboard extends JComponent {
     protected static Chessboard chessboardInstance;
     protected Archive archive;
     private JLabel statusLabel = new JLabel();
+    private HashMap<ChessComponent, ArrayList<ChessComponent>> aWhiteChessToWhichItCanMove = new HashMap<>();
+    private HashMap<ChessComponent, ArrayList<ChessComponent>> aBlackChessToWhichItCanMove = new HashMap<>();
+    private int whiteKingX = 7;
+    private int whiteKingY = 4;
+    private int BlackKingX = 0;
+    private int BlackKingY = 4;
+
+    public int getWhiteKingX() {
+        return whiteKingX;
+    }
+
+    public void setWhiteKingX(int whiteKingX) {
+        this.whiteKingX = whiteKingX;
+    }
+
+    public int getWhiteKingY() {
+        return whiteKingY;
+    }
+
+    public void setWhiteKingY(int whiteKingY) {
+        this.whiteKingY = whiteKingY;
+    }
+
+    public int getBlackKingX() {
+        return BlackKingX;
+    }
+
+    public void setBlackKingX(int blackKingX) {
+        BlackKingX = blackKingX;
+    }
+
+    public int getBlackKingY() {
+        return BlackKingY;
+    }
+
+    public void setBlackKingY(int blackKingY) {
+        BlackKingY = blackKingY;
+    }
+
+    public HashMap<ChessComponent, ArrayList<ChessComponent>> getaWhiteChessToWhichItCanMove() {
+        return aWhiteChessToWhichItCanMove;
+    }
+
+    public HashMap<ChessComponent, ArrayList<ChessComponent>> getaBlackChessToWhichItCanMove() {
+        return aBlackChessToWhichItCanMove;
+    }
 
     public void setStatusLabelText(String text) {
         this.statusLabel.setText(text);
@@ -63,6 +110,7 @@ public class Chessboard extends JComponent {
         this.archive = archive;
 
         recoverFromArchive();
+        scanTheChessboard();
     }
 
     public Chessboard(int width, int height) {
@@ -223,6 +271,8 @@ public class Chessboard extends JComponent {
         addAsyncTask(() -> {
             ChessGameFrame.getInstance().setSaveButtonEnabled(true);
         }, 1);
+
+        this.scanTheChessboard();
     }
 
 
@@ -329,4 +379,56 @@ public class Chessboard extends JComponent {
         putChessOnBoard(chessComponent);
     }
 
+    public ArrayList<HashMap<ChessComponent, ArrayList<ChessComponent>>> scanTheChessboard() {
+
+        for (int x1 = 0; x1 < 8; x1++) {
+            for (int y1 = 0; y1 < 8; y1++) {
+                if (chessComponents[x1][y1] instanceof KingChessComponent && chessComponents[x1][y1].getChessColor() == ChessColor.WHITE) {
+                    whiteKingX = x1;
+                    whiteKingY = y1;
+                    System.out.printf("The white king is in %d,%d\n", whiteKingX, whiteKingY);
+                }
+                if (chessComponents[x1][y1] instanceof KingChessComponent && chessComponents[x1][y1].getChessColor() == ChessColor.BLACK) {
+                    BlackKingX = x1;
+                    BlackKingY = y1;
+                    System.out.printf("The black king is in %d,%d\n", BlackKingX, BlackKingY);
+                }
+                for (int x2 = 0; x2 < 8; x2++) {
+                    for (int y2 = 0; y2 < 8; y2++) {
+                        if (!(chessComponents[x1][y1] instanceof EmptySlotComponent)) {
+                            if ((chessComponents[x1][y1].canMoveTo(chessComponents, new ChessboardPoint(x2, y2))) && (!chessComponents[x2][y2].getChessColor().equals(chessComponents[x1][y1].getChessColor()))) {
+                                chessComponents[x1][y1].setToWhereCanMove(chessComponents[x2][y2]);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+
+        for (int i = 0; i < 8; i++) {
+            for (int i1 = 0; i1 < 8; i1++) {
+                if (!(chessComponents[i][i1] instanceof EmptySlotComponent)) {
+                    if (chessComponents[i][i1].getChessColor() == ChessColor.WHITE) {
+                        if (chessComponents[i][i1].getToWhereCanMove().contains(chessComponents[BlackKingX][BlackKingY])) {
+                            new KingAttackedDialog(chessComponents[i][i1].getChessColor());
+                        }
+                        aWhiteChessToWhichItCanMove.put(chessComponents[i][i1], chessComponents[i][i1].getToWhereCanMove());
+                    }
+                    if (chessComponents[i][i1].getChessColor() == ChessColor.BLACK) {
+                        if (chessComponents[i][i1].getToWhereCanMove().contains(chessComponents[whiteKingX][whiteKingY])) {
+                            new KingAttackedDialog(chessComponents[i][i1].getChessColor());
+                        }
+                        aBlackChessToWhichItCanMove.put(chessComponents[i][i1], chessComponents[i][i1].getToWhereCanMove());
+                    }
+                }
+            }
+        }
+
+        ArrayList<HashMap<ChessComponent, ArrayList<ChessComponent>>> scannerChessboardResult = new ArrayList<>();
+        scannerChessboardResult.add(aWhiteChessToWhichItCanMove);
+        scannerChessboardResult.add(aBlackChessToWhichItCanMove);
+
+        return scannerChessboardResult;
+    }
 }

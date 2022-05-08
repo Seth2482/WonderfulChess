@@ -10,6 +10,7 @@ import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * 这个类是一个抽象类，主要表示8*8棋盘上每个格子的棋子情况，当前有两个子类继承它，分别是EmptySlotComponent(空棋子)和RookChessComponent(车)。
@@ -44,6 +45,15 @@ public abstract class ChessComponent extends JComponent {
     protected final ChessColor chessColor;
     private boolean selected;
     private boolean canBeMoveTo;
+    private ArrayList<ChessComponent> toWhereCanMove = new ArrayList<>();
+
+    public ArrayList<ChessComponent> getToWhereCanMove() {
+        return toWhereCanMove;
+    }
+
+    public void setToWhereCanMove(ChessComponent chessComponent) {
+        this.toWhereCanMove.add(chessComponent);
+    }
 
     public void setCanBeMoveTo(boolean canBeMoveTo) {
         this.canBeMoveTo = canBeMoveTo;

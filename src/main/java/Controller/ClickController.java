@@ -3,9 +3,13 @@ package Controller;
 
 import Model.ChessColor;
 import Model.ChessComponent;
+import Model.KingChessComponent;
 import Model.PawnChessComponent;
 import View.Chessboard;
 import View.ChessboardPoint;
+
+import javax.swing.*;
+import java.awt.*;
 
 public class ClickController {
     private final Chessboard chessboard;
@@ -34,7 +38,6 @@ public class ClickController {
             }
         } else {
             if (first == chessComponent) { // 再次点击取消选取
-
                 chessComponent.setSelected(false);
                 ChessComponent recordFirst = first;
                 first = null;
@@ -57,14 +60,17 @@ public class ClickController {
                 //repaint in swap chess method.
                 chessboard.swapChessComponents(first, chessComponent);
 
-                if (first instanceof PawnChessComponent && first.getChessboardPoint().getX() == 0 && first.getChessColor() == ChessColor.WHITE) {
+                if (first instanceof PawnChessComponent && first.getChessboardPoint().getX() == 0 && first.getChessColor() == ChessColor.BLACK) {
                     ((PawnChessComponent) first).showDialog();
                 }
-                if (first instanceof PawnChessComponent && first.getChessboardPoint().getX() == 7 && first.getChessColor() == ChessColor.BLACK) {
+                if (first instanceof PawnChessComponent && first.getChessboardPoint().getX() == 7 && first.getChessColor() == ChessColor.WHITE) {
                     ((PawnChessComponent) first).showDialog();
                 }
 
+
                 chessboard.swapColor();
+                chessboard.scanTheChessboard();
+
 
                 first.setSelected(false);
                 first = null;
@@ -100,3 +106,4 @@ public class ClickController {
                 first.canMoveTo(chessboard.getChessComponents(), chessComponent.getChessboardPoint());
     }
 }
+

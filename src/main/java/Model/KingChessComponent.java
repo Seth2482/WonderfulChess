@@ -10,6 +10,7 @@ public class KingChessComponent extends ChessComponent {
     private static Image KING_WHITE;
     private static Image KING_BLACK;
 
+
     public void loadResource() throws IOException {
         if (KING_WHITE == null) {
             KING_WHITE = getImage("images/king-white.png");
