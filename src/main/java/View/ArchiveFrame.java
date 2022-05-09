@@ -1,7 +1,10 @@
 package View;
 
 import Archive.Archive;
+import Archive.Exception.*;
 import View.panels.GradientPanel;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonSyntaxException;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -10,6 +13,7 @@ import javax.swing.filechooser.FileFilter;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.Locale;
 
 public class ArchiveFrame extends JFrame {
@@ -80,11 +84,34 @@ public class ArchiveFrame extends JFrame {
             public void actionPerformed(ActionEvent e) {
 
                 // Get Archive
-                //TODO:: Validate the archive
-                Archive archive = Archive.getArchiveFromPath(archivePath.getText());
-                dispose();
-                ChessGameFrame mainFrame = new ChessGameFrame(1000, 760, archive);
-                mainFrame.setVisible(true);
+                //
+                boolean validArchive = false;
+                Archive archive = null;
+                try {
+                    validArchive = true;
+                    archive = Archive.getArchiveFromPath(archivePath.getText());
+                } catch (FileNotFoundException ex) {
+                    JOptionPane.showMessageDialog(instance,
+                            "Archive file doesn't exist",
+                            "Failed to load the archive",
+                            JOptionPane.ERROR_MESSAGE);
+                } catch (ArchiveException ex) {
+                    JOptionPane.showMessageDialog(instance,
+                            ex.getMessage(),
+                            "Failed to load the archive",
+                            JOptionPane.ERROR_MESSAGE);
+                } catch (JsonParseException ex) {
+                    JOptionPane.showMessageDialog(instance,
+                            "Archive file is not in standard JSON format",
+                            "Failed to load the archive",
+                            JOptionPane.ERROR_MESSAGE);
+                }
+
+                if (validArchive) {
+                    dispose();
+                    ChessGameFrame mainFrame = new ChessGameFrame(1000, 760, archive);
+                    mainFrame.setVisible(true);
+                }
 
             }
         });

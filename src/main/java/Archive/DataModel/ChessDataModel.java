@@ -17,6 +17,21 @@ public abstract class ChessDataModel {
         this.chessColor = chessColor;
     }
 
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public ChessColor getChessColor() {
+        return chessColor;
+    }
+
+    public ChessType getChessType() {
+        return chessType;
+    }
 
     public abstract ChessComponent toChessComponent(Chessboard chessboard);
 }

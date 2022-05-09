@@ -9,12 +9,13 @@ import View.Chessboard;
 public class Step {
     ChessDataModel chess1; // 行棋方
     ChessDataModel chess2;
-    ChessDataModel[][] ChessboardAfterThisStep = new ChessDataModel[8][8];
+    ChessDataModel[][] ChessboardAfterThisStep;
 
     public Step(Chessboard chessboard, ChessComponent chess1, ChessComponent chess2) {
 
         this.chess1 = DataModelFactory.generateDataModel(chess1);
         this.chess2 = DataModelFactory.generateDataModel(chess2);
+        this.ChessboardAfterThisStep = new ChessDataModel[8][8];
         ChessComponent[][] chessComponents = chessboard.getChessComponents();
 
         for (int m = 0; m < chessboard.getChessComponents().length; m++) {
@@ -24,11 +25,12 @@ public class Step {
         }
     }
 
-    public ChessComponent[][] getChessComponents() {
+
+
+    public ChessComponent[][] getChessComponents(Chessboard chessboard) {
         ChessComponent[][] chessComponents = new ChessComponent[8][8];
 
         ChessDataModel[][] dataModels = ChessboardAfterThisStep;
-        Chessboard chessboard = Chessboard.getInstance();
         for (int m = 0; m < dataModels.length; m++) {
             for (int n = 0; n < dataModels.length; n++) {
                 chessComponents[m][n] = dataModels[m][n].toChessComponent(chessboard);
@@ -36,6 +38,26 @@ public class Step {
         }
 
         return chessComponents;
+    }
+
+    public ChessDataModel[][] getChessDataModels() {
+        return ChessboardAfterThisStep;
+    }
+
+    public ChessComponent getChess1Component(Chessboard chessboard){
+        return chess1.toChessComponent(chessboard);
+    }
+
+    public ChessComponent getChess2Component(Chessboard chessboard){
+        return chess2.toChessComponent(chessboard);
+    }
+
+    public ChessDataModel getChess1() {
+        return chess1;
+    }
+
+    public ChessDataModel getChess2() {
+        return chess2;
     }
 
     @Override

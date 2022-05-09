@@ -40,7 +40,6 @@ public class Chessboard extends JComponent {
     // 等待执行的任务列表
     HashMap<String, Runnable> asyncTasks = new HashMap<String, Runnable>();
     HashMap<String, Integer> asyncTasksSteps = new HashMap<String, Integer>();
-    protected static Chessboard chessboardInstance;
     protected Archive archive;
     private JLabel statusLabel = new JLabel();
     private HashMap<ChessComponent, ArrayList<ChessComponent>> aWhiteChessToWhichItCanMove = new HashMap<>();
@@ -106,7 +105,6 @@ public class Chessboard extends JComponent {
 
         initiateEmptyChessboard();
 
-        chessboardInstance = this;
         this.archive = archive;
 
         recoverFromArchive();
@@ -118,7 +116,6 @@ public class Chessboard extends JComponent {
         setSize(width, height);
         CHESS_SIZE = width / 8;
         System.out.printf("chessboard size = %d, chess size = %d\n", width, CHESS_SIZE);
-        chessboardInstance = this;
 
         archive = new Archive();
         archive.initialize();
@@ -340,7 +337,7 @@ public class Chessboard extends JComponent {
     }
 
     public static Chessboard getInstance() {
-        return chessboardInstance;
+        return ChessGameFrame.getChessboard();
     }
 
     public Archive getArchive() {

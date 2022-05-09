@@ -1,4 +1,4 @@
-package Store;
+package Controller.Store;
 
 public class Config {
 
