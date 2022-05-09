@@ -393,6 +393,7 @@ public class Chessboard extends JComponent {
                     BlackKingY = y1;
                     System.out.printf("The black king is in %d,%d\n", BlackKingX, BlackKingY);
                 }
+                chessComponents[x1][y1].getToWhereCanMove().clear();
                 for (int x2 = 0; x2 < 8; x2++) {
                     for (int y2 = 0; y2 < 8; y2++) {
                         if (!(chessComponents[x1][y1] instanceof EmptySlotComponent)) {

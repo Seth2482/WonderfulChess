@@ -53,17 +53,20 @@ public class ClickController {
                 }
             } else if (handleSecond(chessComponent)) {
                 if (first instanceof PawnChessComponent) {
-                    if (((PawnChessComponent) first).isTheFirstMove()) {
+                    if (((PawnChessComponent) first).isTheFirstMove()) {//Todo:: 吃过路兵的判断
+                        if (Math.abs(((PawnChessComponent) first).getChessboardPoint().getX()- chessComponent.getChessboardPoint().getX()) == 2) {
+                            ((PawnChessComponent) first).setCanBeEnAsPassant(true);
+                        }
                         ((PawnChessComponent) first).setTheFirstMove(false);
                     }
                 }
                 //repaint in swap chess method.
                 chessboard.swapChessComponents(first, chessComponent);
 
-                if (first instanceof PawnChessComponent && first.getChessboardPoint().getX() == 0 && first.getChessColor() == ChessColor.BLACK) {
+                if (first instanceof PawnChessComponent && first.getChessboardPoint().getX() == 0 && first.getChessColor() == ChessColor.WHITE) {
                     ((PawnChessComponent) first).showDialog();
                 }
-                if (first instanceof PawnChessComponent && first.getChessboardPoint().getX() == 7 && first.getChessColor() == ChessColor.WHITE) {
+                if (first instanceof PawnChessComponent && first.getChessboardPoint().getX() == 7 && first.getChessColor() == ChessColor.BLACK) {
                     ((PawnChessComponent) first).showDialog();
                 }
 

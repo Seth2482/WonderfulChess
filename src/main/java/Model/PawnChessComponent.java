@@ -5,7 +5,6 @@ import View.Chessboard;
 import View.ChessboardPoint;
 
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
@@ -17,6 +16,10 @@ public class PawnChessComponent extends ChessComponent {
     private final ChessColor thisChessColor;//record the color of chess;
     private boolean isTheFirstMove = true;//是否是第一步
     private boolean canBeEnAsPassant = false;//能否被别人当作过路兵吃掉
+
+    public void setCanBeEnAsPassant(boolean canBeEnAsPassant) {
+        this.canBeEnAsPassant = canBeEnAsPassant;
+    }
 
     public void setTheFirstMove(boolean theFirstMove) {
         isTheFirstMove = theFirstMove;
@@ -85,6 +88,8 @@ public class PawnChessComponent extends ChessComponent {
                 if (!(chessComponents[destination.getX()][destination.getY()] instanceof EmptySlotComponent)) {
                     return false;
                 }
+
+                //TODO:: 修复不能吃过路兵的问题
                 canBeEnAsPassant = true;
 
                 // 对手下完棋后 这个棋就不能吃了
@@ -129,12 +134,12 @@ public class PawnChessComponent extends ChessComponent {
     }
 
     public void showDialog() {
-        new sideLineTransitionDialog(this);
+        new SideLineTransitionDialog(this);
     }
 }
 
-class sideLineTransitionDialog extends JDialog {
-    sideLineTransitionDialog(PawnChessComponent pawn) {
+class SideLineTransitionDialog extends JDialog {
+    SideLineTransitionDialog(PawnChessComponent pawn) {
         setVisible(true);
         setLayout(null);
         setBounds(500, 300, 500, 150);
