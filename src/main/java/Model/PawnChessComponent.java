@@ -16,6 +16,17 @@ public class PawnChessComponent extends ChessComponent {
     private final ChessColor thisChessColor;//record the color of chess;
     private boolean isTheFirstMove = true;//是否是第一步
     private boolean canBeEnAsPassant = false;//能否被别人当作过路兵吃掉
+    private int roundTimeAfterPassant = 0;
+
+
+
+    public int getRoundTimeAfterPassant() {
+        return roundTimeAfterPassant;
+    }
+
+    public void setRoundTimeAfterPassant(int roundTimeAfterPassant) {
+        this.roundTimeAfterPassant = roundTimeAfterPassant;
+    }
 
     public void setCanBeEnAsPassant(boolean canBeEnAsPassant) {
         this.canBeEnAsPassant = canBeEnAsPassant;
@@ -89,13 +100,13 @@ public class PawnChessComponent extends ChessComponent {
                     return false;
                 }
 
-                //TODO:: 修复不能吃过路兵的问题
-                canBeEnAsPassant = true;
-
-                // 对手下完棋后 这个棋就不能吃了
-                Chessboard.invokeLater(() -> {
-                    this.canBeEnAsPassant = false;
-                }, 2);
+//                //TODO:: 修复不能吃过路兵的问题
+//                canBeEnAsPassant = true;
+//
+//                // 对手下完棋后 这个棋就不能吃了
+//                Chessboard.invokeLater(() -> {
+//                    this.canBeEnAsPassant = false;
+//                }, 2);
 
                 return true;
             }
@@ -111,7 +122,7 @@ public class PawnChessComponent extends ChessComponent {
             }//斜着吃子
             if (source.getY() != chessComponents.length - 1) {
                 if (chessComponents[source.getX()][source.getY() + 1] instanceof PawnChessComponent && destination.getX() == source.getX() - factor && destination.getY() == source.getY() + 1) {
-                    if (((PawnChessComponent) chessComponents[source.getX()][source.getY() + 1]).canBeEnAsPassant) {
+                    if (((PawnChessComponent) chessComponents[source.getX()][source.getY() + 1]).canBeEnAsPassant && chessComponents[source.getX()][source.getY() + 1].chessColor != thisChessColor) {
                         return true;
                     }
                 }
@@ -119,7 +130,7 @@ public class PawnChessComponent extends ChessComponent {
 
             if (source.getY() != 0) {
                 if (chessComponents[source.getX()][source.getY() - 1] instanceof PawnChessComponent && destination.getX() == source.getX() - factor && destination.getY() == source.getY() - 1) {
-                    if (((PawnChessComponent) chessComponents[source.getX()][source.getY() - 1]).canBeEnAsPassant) {
+                    if (((PawnChessComponent) chessComponents[source.getX()][source.getY() - 1]).canBeEnAsPassant && chessComponents[source.getX()][source.getY() - 1].chessColor != thisChessColor) {
                         return true;
                     }
                 }
