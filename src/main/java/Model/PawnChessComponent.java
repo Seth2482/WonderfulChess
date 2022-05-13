@@ -100,13 +100,6 @@ public class PawnChessComponent extends ChessComponent {
                     return false;
                 }
 
-//                //TODO:: 修复不能吃过路兵的问题
-//                canBeEnAsPassant = true;
-//
-//                // 对手下完棋后 这个棋就不能吃了
-//                Chessboard.invokeLater(() -> {
-//                    this.canBeEnAsPassant = false;
-//                }, 2);
 
                 return true;
             }

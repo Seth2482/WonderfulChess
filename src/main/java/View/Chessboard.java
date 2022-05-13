@@ -9,6 +9,7 @@ import Model.PawnChessComponent;
 import Model.QueenChessComponent;
 import Archive.Archive;
 import View.Dialog.KingAttackedDialog;
+import View.Dialog.LoseDialog;
 
 import javax.swing.*;
 import java.awt.*;
@@ -377,15 +378,18 @@ public class Chessboard extends JComponent {
     }
 
     public ArrayList<HashMap<ChessComponent, ArrayList<ChessComponent>>> scanTheChessboard() {
-
+        int blackKingCounter = 0;
+        int whiteKingCounter = 0;
         for (int x1 = 0; x1 < 8; x1++) {
             for (int y1 = 0; y1 < 8; y1++) {
                 if (chessComponents[x1][y1] instanceof KingChessComponent && chessComponents[x1][y1].getChessColor() == ChessColor.WHITE) {
+                    whiteKingCounter++;
                     whiteKingX = x1;
                     whiteKingY = y1;
                     System.out.printf("The white king is in %d,%d\n", whiteKingX, whiteKingY);
                 }
                 if (chessComponents[x1][y1] instanceof KingChessComponent && chessComponents[x1][y1].getChessColor() == ChessColor.BLACK) {
+                    blackKingCounter++;
                     BlackKingX = x1;
                     BlackKingY = y1;
                     System.out.printf("The black king is in %d,%d\n", BlackKingX, BlackKingY);
@@ -399,6 +403,7 @@ public class Chessboard extends JComponent {
                         ((PawnChessComponent) chessComponents[x1][y1]).setRoundTimeAfterPassant(i + 1);
                     }
                 }
+
                 chessComponents[x1][y1].getToWhereCanMove().clear();
                 for (int x2 = 0; x2 < 8; x2++) {
                     for (int y2 = 0; y2 < 8; y2++) {
@@ -412,19 +417,62 @@ public class Chessboard extends JComponent {
             }
         }
 
+        if (whiteKingCounter != 1) {
+            new LoseDialog(ChessColor.BLACK);
+        }
+        if (blackKingCounter != 1) {
+            new LoseDialog(ChessColor.WHITE);
+        }
 
+        a:
         for (int i = 0; i < 8; i++) {
             for (int i1 = 0; i1 < 8; i1++) {
                 if (!(chessComponents[i][i1] instanceof EmptySlotComponent)) {
                     if (chessComponents[i][i1].getChessColor() == ChessColor.WHITE) {
                         if (chessComponents[i][i1].getToWhereCanMove().contains(chessComponents[BlackKingX][BlackKingY])) {
+                            if (chessComponents[BlackKingX][BlackKingY].getToWhereCanMove().size() == 0) {
+                                new LoseDialog(ChessColor.WHITE);
+                                break a;
+                            }
+
+                            int counterWhereCanMove = 0;
+                            for (int i2 = 0; i2 < chessComponents[BlackKingX][BlackKingY].getToWhereCanMove().size(); i2++) {
+                                if (chessComponents[i][i1].getToWhereCanMove().contains(chessComponents[BlackKingX][BlackKingY].getToWhereCanMove().get(i2))) {
+                                    counterWhereCanMove++;
+                                }
+                                if (counterWhereCanMove == chessComponents[BlackKingX][BlackKingY].getToWhereCanMove().size()) {
+                                    new LoseDialog(ChessColor.WHITE);
+                                    break a;
+                                }
+                            }
+
                             new KingAttackedDialog(chessComponents[i][i1].getChessColor());
+                            break a;
                         }
                         aWhiteChessToWhichItCanMove.put(chessComponents[i][i1], chessComponents[i][i1].getToWhereCanMove());
                     }
                     if (chessComponents[i][i1].getChessColor() == ChessColor.BLACK) {
+
                         if (chessComponents[i][i1].getToWhereCanMove().contains(chessComponents[whiteKingX][whiteKingY])) {
+                            if (chessComponents[whiteKingX][whiteKingY].getToWhereCanMove().size() == 0) {
+                                new LoseDialog(ChessColor.BLACK);
+                                break a;
+                            }
+
+                            int counterWhereCanMove = 0;
+                            for (int i2 = 0; i2 < chessComponents[whiteKingX][whiteKingY].getToWhereCanMove().size(); i2++) {
+                                if (chessComponents[i][i1].getToWhereCanMove().contains(chessComponents[whiteKingX][whiteKingY].getToWhereCanMove().get(i2))) {
+                                    counterWhereCanMove++;
+                                }
+                                if (counterWhereCanMove == chessComponents[whiteKingX][whiteKingY].getToWhereCanMove().size()) {
+                                    new LoseDialog(ChessColor.BLACK);
+                                    break a;
+                                }
+                            }
+
                             new KingAttackedDialog(chessComponents[i][i1].getChessColor());
+                            break a;
+//
                         }
                         aBlackChessToWhichItCanMove.put(chessComponents[i][i1], chessComponents[i][i1].getToWhereCanMove());
                     }

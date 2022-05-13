@@ -7,6 +7,8 @@ import Model.KingChessComponent;
 import Model.PawnChessComponent;
 import View.Chessboard;
 import View.ChessboardPoint;
+import View.Dialog.KingAttackedDialog;
+import View.Dialog.LoseDialog;
 
 import javax.swing.*;
 import java.awt.*;
@@ -54,7 +56,7 @@ public class ClickController {
             } else if (handleSecond(chessComponent)) {
                 if (first instanceof PawnChessComponent) {
                     if (((PawnChessComponent) first).isTheFirstMove()) {//Todo:: 吃过路兵的判断
-                        if (Math.abs(((PawnChessComponent) first).getChessboardPoint().getX()- chessComponent.getChessboardPoint().getX()) == 2) {
+                        if (Math.abs(((PawnChessComponent) first).getChessboardPoint().getX() - chessComponent.getChessboardPoint().getX()) == 2) {
                             ((PawnChessComponent) first).setCanBeEnAsPassant(true);
                         }
                         ((PawnChessComponent) first).setTheFirstMove(false);
@@ -72,7 +74,6 @@ public class ClickController {
 
 
                 chessboard.swapColor();
-
 
 
                 first.setSelected(false);
