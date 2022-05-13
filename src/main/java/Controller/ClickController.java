@@ -72,7 +72,7 @@ public class ClickController {
 
 
                 chessboard.swapColor();
-                chessboard.scanTheChessboard();
+
 
 
                 first.setSelected(false);
@@ -88,6 +88,7 @@ public class ClickController {
                 }
             }
         }
+        chessboard.scanTheChessboard();
     }
 
     /**
