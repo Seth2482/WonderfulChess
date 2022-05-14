@@ -17,6 +17,7 @@ public class RookChessComponent extends ChessComponent {
      */
     private static Image ROOK_WHITE;
     private static Image ROOK_BLACK;
+    private boolean canBeChangeKing = true;
 
 
     /**
