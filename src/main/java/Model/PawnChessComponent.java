@@ -6,6 +6,7 @@ import View.ChessboardPoint;
 
 
 import javax.swing.*;
+import javax.xml.transform.Source;
 import java.awt.*;
 import java.io.IOException;
 
@@ -16,25 +17,6 @@ public class PawnChessComponent extends ChessComponent {
     private final ChessColor thisChessColor;//record the color of chess;
     private boolean isTheFirstMove = true;//是否是第一步
     private boolean canBeEnAsPassant = false;//能否被别人当作过路兵吃掉
-    private int roundTimeAfterPassant = 0;
-
-
-
-    public int getRoundTimeAfterPassant() {
-        return roundTimeAfterPassant;
-    }
-
-    public void setRoundTimeAfterPassant(int roundTimeAfterPassant) {
-        this.roundTimeAfterPassant = roundTimeAfterPassant;
-    }
-
-    public void setCanBeEnAsPassant(boolean canBeEnAsPassant) {
-        this.canBeEnAsPassant = canBeEnAsPassant;
-    }
-
-    public void setTheFirstMove(boolean theFirstMove) {
-        isTheFirstMove = theFirstMove;
-    }
 
     public boolean isCanBeEnAsPassant() {
         return canBeEnAsPassant;
@@ -100,7 +82,6 @@ public class PawnChessComponent extends ChessComponent {
                     return false;
                 }
 
-
                 return true;
             }
             return false;
@@ -139,6 +120,44 @@ public class PawnChessComponent extends ChessComponent {
 
     public void showDialog() {
         new SideLineTransitionDialog(this);
+    }
+
+    @Override
+    public void swapLocation(ChessComponent another) {
+        super.swapLocation(another);
+
+        checkCanBeEnAsPassant();
+        updateIsTheFirstMove();
+        checkIfReachedBottom();
+
+
+    }
+
+    public void checkCanBeEnAsPassant() {
+        if (isTheFirstMove) {
+            canBeEnAsPassant = true;
+
+            // 对手下完棋后 这个棋就不能吃了
+            Chessboard.invokeLater(() -> {
+                this.canBeEnAsPassant = false;
+            }, 2);
+        }
+    }
+
+    public void updateIsTheFirstMove() {
+        if (isTheFirstMove) {
+            isTheFirstMove = false;
+        }
+    }
+
+    // 底线升变逻辑
+    public void checkIfReachedBottom() {
+        int bottomX = getChessColor() == ChessColor.WHITE ? 0 : 7;
+
+        if (getChessboardPoint().getX() == bottomX){
+            showDialog();
+        }
+
     }
 }
 
