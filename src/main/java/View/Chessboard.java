@@ -43,14 +43,33 @@ public class Chessboard extends JComponent {
     HashMap<String, Integer> asyncTasksSteps = new HashMap<String, Integer>();
     protected Archive archive;
     private JLabel statusLabel = new JLabel();
+    private JButton restartButton;
+    private GameMode gameMode;
     private HashMap<ChessComponent, ArrayList<ChessComponent>> aWhiteChessToWhichItCanMove = new HashMap<>();
     private HashMap<ChessComponent, ArrayList<ChessComponent>> aBlackChessToWhichItCanMove = new HashMap<>();
+    private ArrayList<ChessComponent> blackChessArray = new ArrayList<>();
     private int whiteKingX = 7;
     private int whiteKingY = 4;
     private int BlackKingX = 0;
     private int BlackKingY = 4;
     private int currentStep = 1;
     private boolean inTest = false;
+
+    public GameMode getGameMode() {
+        return gameMode;
+    }
+
+    public void setGameMode(GameMode gameMode) {
+        this.gameMode = gameMode;
+    }
+
+    public JButton getRestartButton() {
+        return restartButton;
+    }
+
+    public void setRestartButton(JButton restartButton) {
+        this.restartButton = restartButton;
+    }
 
     public int getWhiteKingX() {
         return whiteKingX;
@@ -174,34 +193,7 @@ public class Chessboard extends JComponent {
             }
         }
 
-        boolean leftWhiteKingChangeRook = chess1 instanceof KingChessComponent && chess1.getChessboardPoint().getX() == 7 && chess1.getChessboardPoint().getY() == 4 && chess2.getChessboardPoint().getX() == 7 && chess2.getChessboardPoint().getY() == 2 && chess1.getChessColor() == ChessColor.WHITE;
-        if (leftWhiteKingChangeRook) {
-            remove(chessComponents[7][0]);
-            add(chessComponents[7][0] = new EmptySlotComponent(new ChessboardPoint(7, 0), calculatePoint(7, 0), clickController, CHESS_SIZE));
-            putChessOnBoard(new RookChessComponent(new ChessboardPoint(7, 3), calculatePoint(7, 3), ChessColor.WHITE, clickController, CHESS_SIZE));
-        }
-
-        boolean rightWhiteKingChangeRook = chess1 instanceof KingChessComponent && chess1.getChessboardPoint().getX() == 7 && chess1.getChessboardPoint().getY() == 4 && chess2.getChessboardPoint().getX() == 7 && chess2.getChessboardPoint().getY() == 6 && chess1.getChessColor() == ChessColor.WHITE;
-        if (rightWhiteKingChangeRook) {
-            remove(chessComponents[7][7]);
-            add(chessComponents[7][7] = new EmptySlotComponent(new ChessboardPoint(7, 7), calculatePoint(7, 7), clickController, CHESS_SIZE));
-            putChessOnBoard(new RookChessComponent(new ChessboardPoint(7, 5), calculatePoint(7, 5), ChessColor.WHITE, clickController, CHESS_SIZE));
-        }
-
-        boolean leftBlackKingChangeRook = chess1 instanceof KingChessComponent && chess1.getChessboardPoint().getX() == 0 && chess1.getChessboardPoint().getY() == 4 && chess2.getChessboardPoint().getX() == 0 && chess2.getChessboardPoint().getY() == 2 && chess1.getChessColor() == ChessColor.BLACK;
-        if (leftBlackKingChangeRook) {
-            remove(chessComponents[0][0]);
-            add(chessComponents[0][0] = new EmptySlotComponent(new ChessboardPoint(0, 0), calculatePoint(0, 0), clickController, CHESS_SIZE));
-            putChessOnBoard(new RookChessComponent(new ChessboardPoint(0, 3), calculatePoint(0, 3), ChessColor.BLACK, clickController, CHESS_SIZE));
-        }
-
-        boolean rightBlackKingChangeRook = chess1 instanceof KingChessComponent && chess1.getChessboardPoint().getX() == 0 && chess1.getChessboardPoint().getY() == 4 && chess2.getChessboardPoint().getX() == 0 && chess2.getChessboardPoint().getY() == 6 && chess1.getChessColor() == ChessColor.BLACK;
-        if (rightBlackKingChangeRook) {
-            remove(chessComponents[0][7]);
-            add(chessComponents[0][7] = new EmptySlotComponent(new ChessboardPoint(0, 7), calculatePoint(0, 7), clickController, CHESS_SIZE));
-            putChessOnBoard(new RookChessComponent(new ChessboardPoint(0, 5), calculatePoint(0, 5), ChessColor.BLACK, clickController, CHESS_SIZE));
-        }
-
+        kingChangeWithRook(chessComponents, chess1, chess2);
 
         chess1.swapLocation(chess2);
         int row1 = chess1.getChessboardPoint().getX(), col1 = chess1.getChessboardPoint().getY();
@@ -229,6 +221,7 @@ public class Chessboard extends JComponent {
 
     public void swapColor() {
         currentColor = currentColor == ChessColor.BLACK ? ChessColor.WHITE : ChessColor.BLACK;
+        checkKingAttacked(chessComponents, gameMode);
         statusLabel.setText("Current Color: " + currentColor.getName());
         statusLabel.repaint();
     }
@@ -423,17 +416,19 @@ public class Chessboard extends JComponent {
         int whiteKingCounter = 0;
         for (int x1 = 0; x1 < 8; x1++) {
             for (int y1 = 0; y1 < 8; y1++) {
+                if (chessComponents[x1][y1].getChessColor() == ChessColor.BLACK) {
+                    blackChessArray.add(chessComponents[x1][y1]);
+                }
+
                 if (chessComponents[x1][y1] instanceof KingChessComponent && chessComponents[x1][y1].getChessColor() == ChessColor.WHITE) {
                     whiteKingCounter++;
                     whiteKingX = x1;
                     whiteKingY = y1;
-                    System.out.printf("The white king is in %d,%d\n", whiteKingX, whiteKingY);
                 }
                 if (chessComponents[x1][y1] instanceof KingChessComponent && chessComponents[x1][y1].getChessColor() == ChessColor.BLACK) {
                     blackKingCounter++;
                     BlackKingX = x1;
                     BlackKingY = y1;
-                    System.out.printf("The black king is in %d,%d\n", BlackKingX, BlackKingY);
                 }
                 chessComponents[x1][y1].getToWhereCanMove().clear();
                 for (int x2 = 0; x2 < 8; x2++) {
@@ -477,7 +472,6 @@ public class Chessboard extends JComponent {
                                 }
                             }
 
-                            new KingAttackedDialog(chessComponents[i][i1].getChessColor());
                             break a;
                         }
                         aWhiteChessToWhichItCanMove.put(chessComponents[i][i1], chessComponents[i][i1].getToWhereCanMove());
@@ -501,7 +495,6 @@ public class Chessboard extends JComponent {
                                 }
                             }
 
-                            new KingAttackedDialog(chessComponents[i][i1].getChessColor());
                             break a;
 //
                         }
@@ -524,5 +517,110 @@ public class Chessboard extends JComponent {
 
     public boolean isInTest() {
         return inTest;
+    }
+
+    public void kingChangeWithRook(ChessComponent[][] chessComponents, ChessComponent chess1, ChessComponent chess2) {
+        boolean leftWhiteKingChangeRook = chess1 instanceof KingChessComponent && chess1.getChessboardPoint().getX() == 7 && chess1.getChessboardPoint().getY() == 4 && chess2.getChessboardPoint().getX() == 7 && chess2.getChessboardPoint().getY() == 2 && chess1.getChessColor() == ChessColor.WHITE;
+        if (leftWhiteKingChangeRook) {
+            remove(chessComponents[7][0]);
+            add(chessComponents[7][0] = new EmptySlotComponent(new ChessboardPoint(7, 0), calculatePoint(7, 0), clickController, CHESS_SIZE));
+            putChessOnBoard(new RookChessComponent(new ChessboardPoint(7, 3), calculatePoint(7, 3), ChessColor.WHITE, clickController, CHESS_SIZE));
+        }
+
+        boolean rightWhiteKingChangeRook = chess1 instanceof KingChessComponent && chess1.getChessboardPoint().getX() == 7 && chess1.getChessboardPoint().getY() == 4 && chess2.getChessboardPoint().getX() == 7 && chess2.getChessboardPoint().getY() == 6 && chess1.getChessColor() == ChessColor.WHITE;
+        if (rightWhiteKingChangeRook) {
+            remove(chessComponents[7][7]);
+            add(chessComponents[7][7] = new EmptySlotComponent(new ChessboardPoint(7, 7), calculatePoint(7, 7), clickController, CHESS_SIZE));
+            putChessOnBoard(new RookChessComponent(new ChessboardPoint(7, 5), calculatePoint(7, 5), ChessColor.WHITE, clickController, CHESS_SIZE));
+        }
+
+        boolean leftBlackKingChangeRook = chess1 instanceof KingChessComponent && chess1.getChessboardPoint().getX() == 0 && chess1.getChessboardPoint().getY() == 4 && chess2.getChessboardPoint().getX() == 0 && chess2.getChessboardPoint().getY() == 2 && chess1.getChessColor() == ChessColor.BLACK;
+        if (leftBlackKingChangeRook) {
+            remove(chessComponents[0][0]);
+            add(chessComponents[0][0] = new EmptySlotComponent(new ChessboardPoint(0, 0), calculatePoint(0, 0), clickController, CHESS_SIZE));
+            putChessOnBoard(new RookChessComponent(new ChessboardPoint(0, 3), calculatePoint(0, 3), ChessColor.BLACK, clickController, CHESS_SIZE));
+        }
+
+        boolean rightBlackKingChangeRook = chess1 instanceof KingChessComponent && chess1.getChessboardPoint().getX() == 0 && chess1.getChessboardPoint().getY() == 4 && chess2.getChessboardPoint().getX() == 0 && chess2.getChessboardPoint().getY() == 6 && chess1.getChessColor() == ChessColor.BLACK;
+        if (rightBlackKingChangeRook) {
+            remove(chessComponents[0][7]);
+            add(chessComponents[0][7] = new EmptySlotComponent(new ChessboardPoint(0, 7), calculatePoint(0, 7), clickController, CHESS_SIZE));
+            putChessOnBoard(new RookChessComponent(new ChessboardPoint(0, 5), calculatePoint(0, 5), ChessColor.BLACK, clickController, CHESS_SIZE));
+        }
+
+    }
+
+    public void AIMove() {
+        scanTheChessboard();
+        int upperbound_chess = blackChessArray.size();
+        Random random = new Random();
+        int random_chess = random.nextInt(upperbound_chess);
+
+        while (blackChessArray.get(random_chess).getToWhereCanMove().size() == 0) {
+            random_chess = random.nextInt(upperbound_chess);
+        }
+
+        if (gameMode == GameMode.PVEEasy) {
+            int upperbound_move = blackChessArray.get(random_chess).getToWhereCanMove().size();
+            int random_move = random.nextInt(upperbound_move);
+
+            ChessComponent beSwapChess = blackChessArray.get(random_chess).getToWhereCanMove().get(random_move);
+            swapChessComponents(blackChessArray.get(random_chess), beSwapChess);
+            swapColor();
+        }
+        if (gameMode == GameMode.PVEHard) {
+            int canEatNumber = 0;
+            int whichChessCanEat = 0;
+            int whichMoveCanEat = 0;
+            for (int i = 0; i < blackChessArray.size(); i++) {
+                for (int i1 = 0; i1 < blackChessArray.get(i).getToWhereCanMove().size(); i1++) {
+                    if (!(blackChessArray.get(i).getToWhereCanMove().get(i1) instanceof EmptySlotComponent)) {
+                        canEatNumber++;
+                        whichChessCanEat = i;
+                        whichMoveCanEat = i1;
+                        break;
+                    }
+                }
+            }
+
+            if (canEatNumber != 0) {
+                ChessComponent beSwapChess = blackChessArray.get(whichChessCanEat).getToWhereCanMove().get(whichMoveCanEat);
+                swapChessComponents(blackChessArray.get(whichChessCanEat), beSwapChess);
+                swapColor();
+            } else {
+                int upperbound_move = blackChessArray.get(random_chess).getToWhereCanMove().size();
+                int random_move = random.nextInt(upperbound_move);
+
+                ChessComponent beSwapChess = blackChessArray.get(random_chess).getToWhereCanMove().get(random_move);
+                swapChessComponents(blackChessArray.get(random_chess), beSwapChess);
+                swapColor();
+            }
+        }
+    }
+
+
+
+
+    public void checkKingAttacked(ChessComponent[][] chessComponents, GameMode gameMode) {
+        scanTheChessboard();
+        a:
+        for (int i = 0; i < 8; i++) {
+            for (int i1 = 0; i1 < 8; i1++) {
+                if (gameMode == GameMode.PVP) {
+                    if (chessComponents[i][i1].getChessColor() == ChessColor.WHITE) {
+                        if (chessComponents[i][i1].getToWhereCanMove().contains(chessComponents[BlackKingX][BlackKingY])) {
+                            new KingAttackedDialog(ChessColor.WHITE);
+                            break a;
+                        }
+                    }
+                }
+                if (chessComponents[i][i1].getChessColor() == ChessColor.BLACK) {
+                    if (chessComponents[i][i1].getToWhereCanMove().contains(chessComponents[whiteKingX][whiteKingY])) {
+                        new KingAttackedDialog(ChessColor.BLACK);
+                        break a;
+                    }
+                }
+            }
+        }
     }
 }
