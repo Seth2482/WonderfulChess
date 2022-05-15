@@ -22,6 +22,7 @@ public class ChessGameFrame extends JFrame {
     private JLabel statusLabel;
     private static ChessGameFrame instance;
     private static Chessboard chessboard;
+    JButton button = new JButton("Restart Game");
 
     public ChessGameFrame(int width, int height) {
         basicInitialize(width, height);
@@ -66,6 +67,7 @@ public class ChessGameFrame extends JFrame {
      */
     private void addChessboard() {
         chessboard = new Chessboard(CHESSBOARD_SIZE, CHESSBOARD_SIZE);
+        chessboard.setRestartButton(button);
         chessboard.setStatusLabel(this.statusLabel);
         gameController = new GameController(chessboard);
         chessboard.setLocation(HEIGHT / 10, HEIGHT / 10);
@@ -99,7 +101,6 @@ public class ChessGameFrame extends JFrame {
      */
 
     private void addRestartButton() {
-        JButton button = new JButton("Restart Game");
         button.addActionListener((e) -> {
             new RestartDialog();
         });

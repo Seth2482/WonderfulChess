@@ -26,7 +26,7 @@ public class ClickController {
             if (handleFirst(chessComponent)) {
                 chessComponent.setSelected(true);
                 first = chessComponent;
-
+                chessboard.getRestartButton().setEnabled(false);
                 for (int i = 0; i < 8; i++) {//遍历哪一个can move to
                     for (int j = 0; j < 8; j++) {
                         if ((first.canMoveTo(chessboard.getChessComponents(), new ChessboardPoint(i, j))) && (!chessboard.getChessComponents()[i][j].getChessColor().equals(first.getChessColor()))) {
@@ -44,6 +44,7 @@ public class ClickController {
                 ChessComponent recordFirst = first;
                 first = null;
                 recordFirst.repaint();
+                chessboard.getRestartButton().setEnabled(true);
 
                 for (int i = 0; i < 8; i++) {//遍历哪一个can move to
                     for (int j = 0; j < 8; j++) {
@@ -53,7 +54,7 @@ public class ClickController {
                         }
                     }
                 }
-            } else if (handleSecond(chessComponent)) {
+            } else if (handleSecond(chessComponent) && !chessComponent.equals(first)) {
                 //repaint in swap chess method.
                 chessboard.swapChessComponents(first, chessComponent);
 
@@ -62,6 +63,7 @@ public class ClickController {
 
                 first.setSelected(false);
                 first = null;
+                chessboard.getRestartButton().setEnabled(true);
 
                 for (int i = 0; i < 8; i++) {//遍历哪一个can move to
                     for (int j = 0; j < 8; j++) {
