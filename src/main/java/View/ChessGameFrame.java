@@ -2,6 +2,7 @@ package View;
 
 import Controller.GameController;
 import Archive.Archive;
+import Model.GameMode;
 import Sound.SoundPlayer;
 import View.Dialog.ChoosePathDialog;
 import View.Dialog.RestartDialog;
@@ -24,10 +25,20 @@ public class ChessGameFrame extends JFrame {
     private static ChessGameFrame instance;
     private static Chessboard chessboard;
     private static SoundPlayer soundPlayer = new SoundPlayer();
+    private GameMode gameMode;
+    JButton button = new JButton("Restart Game");
 
-    public ChessGameFrame(int width, int height) {
+    public GameMode getGameMode() {
+        return gameMode;
+    }
+
+    public void setGameMode(GameMode gameMode) {
+        this.gameMode = gameMode;
+    }
+
+    public ChessGameFrame(int width, int height, GameMode gameMode) {
         basicInitialize(width, height);
-
+        this.gameMode = gameMode;
         // 不要改代码的顺序 不然会很难收场！！
         // 已经成屎山代码了
         addSaveButton();
@@ -39,9 +50,10 @@ public class ChessGameFrame extends JFrame {
 
     }
 
-    public ChessGameFrame(int width, int height, Archive archive) {
+    public ChessGameFrame(int width, int height, Archive archive, GameMode gameMode) {
         basicInitialize(width, height);
 
+        this.gameMode = gameMode;
         addSaveButton();
         addLabel();
         addChessboard(archive);
@@ -68,7 +80,9 @@ public class ChessGameFrame extends JFrame {
      */
     private void addChessboard() {
         chessboard = new Chessboard(CHESSBOARD_SIZE, CHESSBOARD_SIZE);
+        chessboard.setRestartButton(button);
         chessboard.setStatusLabel(this.statusLabel);
+        chessboard.setGameMode(gameMode);
         gameController = new GameController(chessboard);
         chessboard.setLocation(HEIGHT / 10, HEIGHT / 10);
         add(chessboard);
@@ -79,6 +93,7 @@ public class ChessGameFrame extends JFrame {
         Chessboard chessboard = new Chessboard(CHESSBOARD_SIZE, CHESSBOARD_SIZE, archive);
         chessboard.setStatusLabel(this.statusLabel);
         gameController = new GameController(chessboard);
+        chessboard.setGameMode(gameMode);
         chessboard.setLocation(HEIGHT / 10, HEIGHT / 10);
         add(chessboard);
         this.repaint();
@@ -101,7 +116,6 @@ public class ChessGameFrame extends JFrame {
      */
 
     private void addRestartButton() {
-        JButton button = new JButton("Restart Game");
         button.addActionListener((e) -> {
             new RestartDialog();
         });

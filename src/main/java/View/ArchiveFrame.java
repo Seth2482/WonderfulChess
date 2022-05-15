@@ -2,6 +2,7 @@ package View;
 
 import Archive.Archive;
 import Archive.Exception.*;
+import Model.GameMode;
 import View.panels.GradientPanel;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSyntaxException;
@@ -73,7 +74,7 @@ public class ArchiveFrame extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 dispose();
-                ChessGameFrame mainFrame = new ChessGameFrame(1000, 760);
+                ChessGameFrame mainFrame = new ChessGameFrame(1000, 760, GameMode.PVEEasy);//Todo:change the mode
                 mainFrame.setVisible(true);
 
 
@@ -109,7 +110,7 @@ public class ArchiveFrame extends JFrame {
 
                 if (validArchive) {
                     dispose();
-                    ChessGameFrame mainFrame = new ChessGameFrame(1000, 760, archive);
+                    ChessGameFrame mainFrame = new ChessGameFrame(1000, 760, archive,GameMode.PVEEasy);//TODO change the mode
                     mainFrame.setVisible(true);
                 }
 
