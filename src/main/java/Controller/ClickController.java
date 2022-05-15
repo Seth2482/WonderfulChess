@@ -1,10 +1,7 @@
 package Controller;
 
 
-import Model.ChessColor;
-import Model.ChessComponent;
-import Model.KingChessComponent;
-import Model.PawnChessComponent;
+import Model.*;
 import View.Chessboard;
 import View.ChessboardPoint;
 import View.Dialog.KingAttackedDialog;
@@ -73,9 +70,13 @@ public class ClickController {
                         }
                     }
                 }
+                if (chessboard.getGameMode() != GameMode.PVP) {
+                    chessboard.AIMove();
+                }
             }
         }
         chessboard.scanTheChessboard();
+
     }
 
     /**

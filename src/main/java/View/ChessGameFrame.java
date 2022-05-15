@@ -2,6 +2,7 @@ package View;
 
 import Controller.GameController;
 import Archive.Archive;
+import Model.GameMode;
 import View.Dialog.ChoosePathDialog;
 import View.Dialog.RestartDialog;
 
@@ -69,6 +70,7 @@ public class ChessGameFrame extends JFrame {
         chessboard = new Chessboard(CHESSBOARD_SIZE, CHESSBOARD_SIZE);
         chessboard.setRestartButton(button);
         chessboard.setStatusLabel(this.statusLabel);
+        chessboard.setGameMode(GameMode.PVEHard);
         gameController = new GameController(chessboard);
         chessboard.setLocation(HEIGHT / 10, HEIGHT / 10);
         add(chessboard);
@@ -79,6 +81,7 @@ public class ChessGameFrame extends JFrame {
         Chessboard chessboard = new Chessboard(CHESSBOARD_SIZE, CHESSBOARD_SIZE, archive);
         chessboard.setStatusLabel(this.statusLabel);
         gameController = new GameController(chessboard);
+        chessboard.setGameMode(GameMode.PVP);
         chessboard.setLocation(HEIGHT / 10, HEIGHT / 10);
         add(chessboard);
         this.repaint();
