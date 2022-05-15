@@ -50,6 +50,7 @@ public class Chessboard extends JComponent {
     private int BlackKingX = 0;
     private int BlackKingY = 4;
     private int currentStep = 1;
+    private boolean inTest = false;
 
     public int getWhiteKingX() {
         return whiteKingX;
@@ -113,7 +114,8 @@ public class Chessboard extends JComponent {
 //        scanTheChessboard();
     }
 
-    public Chessboard(int width, int height) {
+    public Chessboard(int width, int height, boolean inTest) {
+        this.inTest = inTest;
         setLayout(null); // Use absolute layout.
         setSize(width, height);
         CHESS_SIZE = width / 8;
@@ -123,6 +125,10 @@ public class Chessboard extends JComponent {
         archive.initialize();
 
         initialAllChess();
+    }
+
+    public Chessboard(int width, int height) {
+        this(width, height, false);
     }
 
     public ChessComponent[][] getChessComponents() {
@@ -297,10 +303,12 @@ public class Chessboard extends JComponent {
 
         archive.initialize();
 
-        ChessGameFrame.getInstance().setSaveButtonEnabled(false);
-        addAsyncTask(() -> {
-            ChessGameFrame.getInstance().setSaveButtonEnabled(true);
-        }, 1);
+        if (!inTest){
+            ChessGameFrame.getInstance().setSaveButtonEnabled(false);
+            addAsyncTask(() -> {
+                ChessGameFrame.getInstance().setSaveButtonEnabled(true);
+            }, 1);
+        }
 
 //        this.scanTheChessboard();
     }
@@ -354,6 +362,7 @@ public class Chessboard extends JComponent {
     }
 
     private void recoverFromArchive() {
+        ChessGameFrame.setChessboard(this);
         ChessComponent[][] chessComponents = archive.getChessComponents();
 
         for (int m = 0; m < chessComponents.length; m++) {
@@ -511,5 +520,9 @@ public class Chessboard extends JComponent {
 
     public int getCurrentStep() {
         return currentStep;
+    }
+
+    public boolean isInTest() {
+        return inTest;
     }
 }

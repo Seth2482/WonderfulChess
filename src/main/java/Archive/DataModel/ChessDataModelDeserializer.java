@@ -14,7 +14,7 @@ public class ChessDataModelDeserializer implements JsonDeserializer<ChessDataMod
 
         // 棋子并非黑白
         String chessColor = object.get("chessColor").getAsString();
-        if (!chessColor.equals("BLACK") && !chessColor.equals("WHITE")) {
+        if (!chessColor.equals("BLACK") && !chessColor.equals("WHITE") && !chessColor.equals("NONE")) {
             throw new InvalidChessColorException("Unexpected chess color:" + object.get("chessColor"));
         }
 

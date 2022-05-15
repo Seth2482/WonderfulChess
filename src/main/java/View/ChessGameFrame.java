@@ -141,5 +141,9 @@ public class ChessGameFrame extends JFrame {
     public static Chessboard getChessboard() {
         return chessboard;
     }
+
+    public static void setChessboard(Chessboard chessboard) {
+        ChessGameFrame.chessboard = chessboard;
+    }
 }
 

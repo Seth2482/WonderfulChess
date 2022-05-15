@@ -18,7 +18,10 @@ public class DataModelFactory {
         }
 
         if (chessComponent instanceof KingChessComponent) {
-            return new KingDataModel(x, y, chessColor);
+            return new KingDataModel(x, y, chessColor,
+                    ((KingChessComponent) chessComponent).isCanBeChangeRook(),
+                    ((KingChessComponent) chessComponent).isHasMoved()
+            );
         }
 
         if (chessComponent instanceof KnightChessComponent) {
@@ -39,7 +42,9 @@ public class DataModelFactory {
         }
 
         if (chessComponent instanceof RookChessComponent) {
-            return new RookDataModel(x, y, chessColor);
+            return new RookDataModel(x, y, chessColor,
+                    ((RookChessComponent) chessComponent).isHasMoved(),
+                    ((RookChessComponent) chessComponent).isCanBeChangeKing());
         }
 
         return null;

@@ -88,8 +88,8 @@ public class ArchiveFrame extends JFrame {
                 boolean validArchive = false;
                 Archive archive = null;
                 try {
-                    validArchive = true;
                     archive = Archive.getArchiveFromPath(archivePath.getText());
+                    validArchive = true;
                 } catch (FileNotFoundException ex) {
                     JOptionPane.showMessageDialog(instance,
                             "Archive file doesn't exist",

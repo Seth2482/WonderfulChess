@@ -18,7 +18,7 @@ public class RookChessComponent extends ChessComponent {
     private static Image ROOK_WHITE;
     private static Image ROOK_BLACK;
     private boolean canBeChangeKing = true;
-
+    private boolean hasMoved = false;
 
     /**
      * 读取加载车棋子的图片
@@ -55,9 +55,15 @@ public class RookChessComponent extends ChessComponent {
         }
     }
 
-    public RookChessComponent(ChessboardPoint chessboardPoint, Point location, ChessColor color, ClickController listener, int size) {
+    public RookChessComponent(ChessboardPoint chessboardPoint, Point location, ChessColor color, ClickController listener, int size, boolean canBeChangeKing, boolean hasMoved) {
         super(chessboardPoint, location, color, listener, size);
+        this.hasMoved = hasMoved;
+        this.canBeChangeKing = canBeChangeKing;
         initiateRookImage(color);
+    }
+
+    public RookChessComponent(ChessboardPoint chessboardPoint, Point location, ChessColor chessColor, ClickController clickController, int size) {
+        this(chessboardPoint, location, chessColor, clickController, size, false, true);
     }
 
     /**
@@ -91,5 +97,19 @@ public class RookChessComponent extends ChessComponent {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public void swapLocation(ChessComponent another) {
+        super.swapLocation(another);
+        hasMoved = false;
+    }
+
+    public boolean isCanBeChangeKing() {
+        return canBeChangeKing;
+    }
+
+    public boolean isHasMoved() {
+        return hasMoved;
     }
 }

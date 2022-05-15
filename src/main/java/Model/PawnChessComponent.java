@@ -49,10 +49,18 @@ public class PawnChessComponent extends ChessComponent {
         }
     }
 
-    public PawnChessComponent(ChessboardPoint chessboardPoint, Point location, ChessColor color, ClickController listener, int size) {
+    public PawnChessComponent(ChessboardPoint chessboardPoint, Point location, ChessColor color, ClickController listener, int size, boolean isTheFirstMove, boolean canBeEnAsPassant) {
         super(chessboardPoint, location, color, listener, size);
         thisChessColor = color;
+        this.isTheFirstMove = isTheFirstMove;
+        this.canBeEnAsPassant = canBeEnAsPassant;
         initiatePawnImage(color);
+
+    }
+
+    public PawnChessComponent(ChessboardPoint chessboardPoint, Point location, ChessColor color, ClickController listener, int size) {
+        this(chessboardPoint, location, color, listener, size, true, false);
+
     }
 
     public boolean canMoveTo(ChessComponent[][] chessComponents, ChessboardPoint destination) {
@@ -128,7 +136,9 @@ public class PawnChessComponent extends ChessComponent {
 
         checkCanBeEnAsPassant();
         updateIsTheFirstMove();
-        checkIfReachedBottom();
+        if (!Chessboard.getInstance().isInTest()){
+            checkIfReachedBottom();
+        }
 
 
     }
@@ -154,7 +164,7 @@ public class PawnChessComponent extends ChessComponent {
     public void checkIfReachedBottom() {
         int bottomX = getChessColor() == ChessColor.WHITE ? 0 : 7;
 
-        if (getChessboardPoint().getX() == bottomX){
+        if (getChessboardPoint().getX() == bottomX) {
             showDialog();
         }
 

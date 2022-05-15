@@ -11,10 +11,17 @@ public class Step {
     ChessDataModel chess2;
     ChessDataModel[][] ChessboardAfterThisStep;
 
-    public Step(Chessboard chessboard, ChessComponent chess1, ChessComponent chess2) {
-
+    public Step(Chessboard chessboard, ChessComponent chess1, ChessComponent chess2,boolean reverse) {
         this.chess1 = DataModelFactory.generateDataModel(chess1);
         this.chess2 = DataModelFactory.generateDataModel(chess2);
+        if (reverse){
+            int chess1X = this.chess2.getX(), chess1Y = this.chess2.getY(), chess2X = this.chess1.getX(), chess2Y = this.chess1.getY();
+            this.chess1.setX(chess1X);
+            this.chess1.setY(chess1Y);
+            this.chess2.setX(chess2X);
+            this.chess2.setY(chess2Y);
+        }
+
         this.ChessboardAfterThisStep = new ChessDataModel[8][8];
         ChessComponent[][] chessComponents = chessboard.getChessComponents();
 

@@ -6,6 +6,7 @@ import Archive.Exception.DuplicatedChessException;
 import Archive.Exception.InvalidChessboardSizeException;
 import Archive.Exception.InvalidStepException;
 import Model.EmptySlotComponent;
+import View.ChessGameFrame;
 import com.google.gson.*;
 import Model.ChessColor;
 import Model.ChessComponent;
@@ -29,7 +30,7 @@ public class Archive {
 
     public void stepTrigger(Chessboard chessboard, ChessComponent chess1, ChessComponent chess2) {
         this.steps.add(
-                new Step(chessboard, chess1, chess2)
+                new Step(chessboard, chess1, chess2, true)
         );
         currentColor = chess1.getChessColor().equals(ChessColor.WHITE) ? ChessColor.BLACK : ChessColor.WHITE;
     }
@@ -77,6 +78,10 @@ public class Archive {
             JsonParseException {
         BufferedReader in = new BufferedReader(new FileReader(path));
         Archive archive = getGson().fromJson(in, Archive.class);
+        if (archive == null){
+            throw new JsonParseException("The file is empty!");
+        }
+
         archive.validate();
         return archive;
 
@@ -157,7 +162,7 @@ public class Archive {
 
         // 检查落子合法性
         // 新建一个虚拟棋盘
-        Chessboard chessboard = new Chessboard(8, 8);
+        Chessboard chessboard = new Chessboard(8, 8, true);
         chessboard.setVisible(false);
         ChessComponent[][] chessComponents = chessboard.getChessComponents();
 
@@ -165,8 +170,8 @@ public class Archive {
         for (int i = 0; i < steps.size(); i++) {
             Step step = steps.get(i);
             ChessDataModel chess1 = step.getChess1(), chess2 = step.getChess2();
-            ChessComponent chess1Component = chessboard.getChessComponents()[chess1.getX()][chess1.getY()];
-            ChessComponent chess2Component = chessboard.getChessComponents()[chess2.getX()][chess2.getY()];
+            ChessComponent chess1Component = chessComponents[chess1.getX()][chess1.getY()];
+            ChessComponent chess2Component = chessComponents[chess2.getX()][chess2.getY()];
 
             if (!(chess1Component instanceof EmptySlotComponent) && !chess1Component.canMoveTo(chessComponents, chess2Component.getChessboardPoint())) {
                 throw new InvalidStepException(String.format("Invalid step: %s %s(%d,%d) -> %s %s(%d,%d)",
