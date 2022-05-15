@@ -15,6 +15,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.*;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 这个类表示面板上的棋盘组件对象
@@ -151,6 +152,13 @@ public class Chessboard extends JComponent {
 
     public void swapChessComponents(ChessComponent chess1, ChessComponent chess2) {
         // Note that chess1 has higher priority, 'destroys' chess2 if exists.
+        ChessGameFrame.getSoundPlayer().play();
+        try {
+            TimeUnit.MILLISECONDS.sleep(100L);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         if (!(chess2 instanceof EmptySlotComponent)) {
             remove(chess2);
             add(chess2 = new EmptySlotComponent(chess2.getChessboardPoint(), chess2.getLocation(), clickController, CHESS_SIZE));

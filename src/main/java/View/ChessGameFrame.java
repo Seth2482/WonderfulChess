@@ -2,6 +2,7 @@ package View;
 
 import Controller.GameController;
 import Archive.Archive;
+import Sound.SoundPlayer;
 import View.Dialog.ChoosePathDialog;
 import View.Dialog.RestartDialog;
 
@@ -22,6 +23,7 @@ public class ChessGameFrame extends JFrame {
     private JLabel statusLabel;
     private static ChessGameFrame instance;
     private static Chessboard chessboard;
+    private static SoundPlayer soundPlayer = new SoundPlayer();
 
     public ChessGameFrame(int width, int height) {
         basicInitialize(width, height);
@@ -144,6 +146,10 @@ public class ChessGameFrame extends JFrame {
 
     public static void setChessboard(Chessboard chessboard) {
         ChessGameFrame.chessboard = chessboard;
+    }
+
+    public static SoundPlayer getSoundPlayer() {
+        return soundPlayer;
     }
 }
 
