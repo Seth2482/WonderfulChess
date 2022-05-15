@@ -19,22 +19,14 @@ public class ChessGameFrame extends JFrame {
     private int HEIGHT;
     public int CHESSBOARD_SIZE;
     private GameController gameController;
-    // 只作中间变量 实际的请以Chessboard的为准
     private JButton saveButton;
     private JLabel statusLabel;
     private static ChessGameFrame instance;
     private static Chessboard chessboard;
     private static SoundPlayer soundPlayer = new SoundPlayer();
-    private GameMode gameMode;
-    JButton button = new JButton("Restart Game");
+    private static GameMode gameMode;
+    JButton restartButton;
 
-    public GameMode getGameMode() {
-        return gameMode;
-    }
-
-    public void setGameMode(GameMode gameMode) {
-        this.gameMode = gameMode;
-    }
 
     public ChessGameFrame(int width, int height, GameMode gameMode) {
         basicInitialize(width, height);
@@ -42,10 +34,10 @@ public class ChessGameFrame extends JFrame {
         // 不要改代码的顺序 不然会很难收场！！
         // 已经成屎山代码了
         addSaveButton();
+        addRestartButton();
         addLabel();
         addChessboard();
         Chessboard.getInstance().setStatusLabelText("Current Color: " + getChessboard().getCurrentColor().getName());
-        addRestartButton();
 
 
     }
@@ -55,10 +47,10 @@ public class ChessGameFrame extends JFrame {
 
         this.gameMode = gameMode;
         addSaveButton();
+        addRestartButton();
         addLabel();
         addChessboard(archive);
         Chessboard.getInstance().setStatusLabelText("Current Color: " + getChessboard().getCurrentColor().getName());
-        addRestartButton();
     }
 
     private void basicInitialize(int width, int height) {
@@ -80,9 +72,7 @@ public class ChessGameFrame extends JFrame {
      */
     private void addChessboard() {
         chessboard = new Chessboard(CHESSBOARD_SIZE, CHESSBOARD_SIZE);
-        chessboard.setRestartButton(button);
         chessboard.setStatusLabel(this.statusLabel);
-        chessboard.setGameMode(gameMode);
         gameController = new GameController(chessboard);
         chessboard.setLocation(HEIGHT / 10, HEIGHT / 10);
         add(chessboard);
@@ -93,7 +83,6 @@ public class ChessGameFrame extends JFrame {
         Chessboard chessboard = new Chessboard(CHESSBOARD_SIZE, CHESSBOARD_SIZE, archive);
         chessboard.setStatusLabel(this.statusLabel);
         gameController = new GameController(chessboard);
-        chessboard.setGameMode(gameMode);
         chessboard.setLocation(HEIGHT / 10, HEIGHT / 10);
         add(chessboard);
         this.repaint();
@@ -116,13 +105,14 @@ public class ChessGameFrame extends JFrame {
      */
 
     private void addRestartButton() {
-        button.addActionListener((e) -> {
+        restartButton = new JButton("Restart Game");
+        restartButton.addActionListener((e) -> {
             new RestartDialog();
         });
-        button.setLocation(HEIGHT, HEIGHT / 10 + 120);
-        button.setSize(200, 60);
-        button.setFont(new Font("Rockwell", Font.BOLD, 20));
-        add(button);
+        restartButton.setLocation(HEIGHT, HEIGHT / 10 + 120);
+        restartButton.setSize(200, 60);
+        restartButton.setFont(new Font("Rockwell", Font.BOLD, 20));
+        add(restartButton);
     }
 
     private void addSaveButton() {
@@ -165,5 +155,18 @@ public class ChessGameFrame extends JFrame {
     public static SoundPlayer getSoundPlayer() {
         return soundPlayer;
     }
+
+    public void setRestartButton(boolean enabled) {
+        restartButton.setEnabled(enabled);
+    }
+
+    public static JButton getRestartButton() {
+        return getInstance().restartButton;
+    }
+
+    public static GameMode getGameMode() {
+        return gameMode;
+    }
+
 }
 

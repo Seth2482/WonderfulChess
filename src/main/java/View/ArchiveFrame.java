@@ -23,7 +23,6 @@ public class ArchiveFrame extends JFrame {
     private JButton chooseDirectory;
     private JPanel titlePanel;
     private JButton confirm;
-    private JButton createNew;
     private JFileChooser chooser;
     private ArchiveFrame instance;
 
@@ -70,16 +69,6 @@ public class ArchiveFrame extends JFrame {
         });
 
 
-        createNew.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                dispose();
-                ChessGameFrame mainFrame = new ChessGameFrame(1000, 760, GameMode.PVEEasy);//Todo:change the mode
-                mainFrame.setVisible(true);
-
-
-            }
-        });
         confirm.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -110,7 +99,7 @@ public class ArchiveFrame extends JFrame {
 
                 if (validArchive) {
                     dispose();
-                    ChessGameFrame mainFrame = new ChessGameFrame(1000, 760, archive,GameMode.PVEEasy);//TODO change the mode
+                    ChessGameFrame mainFrame = new ChessGameFrame(1000, 760, archive, archive.getGameMode());
                     mainFrame.setVisible(true);
                 }
 

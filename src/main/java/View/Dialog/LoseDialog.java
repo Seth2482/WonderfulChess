@@ -8,8 +8,9 @@ import java.awt.*;
 
 public class LoseDialog extends JDialog {
     public LoseDialog(ChessColor color) {
-        setVisible(true);
         setLayout(null);
+        setModal(true);
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         setBounds(500, 300, 500, 150);
 
 
@@ -34,5 +35,6 @@ public class LoseDialog extends JDialog {
             this.dispose();
         });
         add(buttonKnow);
+        setVisible(true);
     }
 }

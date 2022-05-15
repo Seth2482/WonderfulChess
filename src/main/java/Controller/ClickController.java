@@ -2,6 +2,7 @@ package Controller;
 
 
 import Model.*;
+import View.ChessGameFrame;
 import View.Chessboard;
 import View.ChessboardPoint;
 import View.Dialog.KingAttackedDialog;
@@ -9,6 +10,7 @@ import View.Dialog.LoseDialog;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.concurrent.TimeUnit;
 
 public class ClickController {
     private final Chessboard chessboard;
@@ -20,13 +22,20 @@ public class ClickController {
 
     public void onClick(ChessComponent chessComponent) {
         if (first == null) {
+            // 人机模式时 屏蔽对黑棋的操作
+            if ((chessboard.getGameMode() == GameMode.PVEEasy || chessboard.getGameMode() == GameMode.PVEHard)
+                    && chessComponent.getChessColor() == ChessColor.BLACK) {
+                return;
+            }
+
             if (handleFirst(chessComponent)) {
                 chessComponent.setSelected(true);
                 first = chessComponent;
-                chessboard.getRestartButton().setEnabled(false);
+                ChessGameFrame.getRestartButton().setEnabled(false);
                 for (int i = 0; i < 8; i++) {//遍历哪一个can move to
                     for (int j = 0; j < 8; j++) {
-                        if ((first.canMoveTo(chessboard.getChessComponents(), new ChessboardPoint(i, j))) && (!chessboard.getChessComponents()[i][j].getChessColor().equals(first.getChessColor()))) {
+                        if ((first.canMoveTo(chessboard.getChessComponents(), new ChessboardPoint(i, j)))
+                                && (!chessboard.getChessComponents()[i][j].getChessColor().equals(first.getChessColor()))) {
                             chessboard.getChessComponents()[i][j].setCanBeMoveTo(true);
                             chessboard.getChessComponents()[i][j].repaint();
                         }
@@ -41,7 +50,7 @@ public class ClickController {
                 ChessComponent recordFirst = first;
                 first = null;
                 recordFirst.repaint();
-                chessboard.getRestartButton().setEnabled(true);
+                ChessGameFrame.getRestartButton().setEnabled(true);
 
                 for (int i = 0; i < 8; i++) {//遍历哪一个can move to
                     for (int j = 0; j < 8; j++) {
@@ -60,7 +69,7 @@ public class ClickController {
 
                 first.setSelected(false);
                 first = null;
-                chessboard.getRestartButton().setEnabled(true);
+                ChessGameFrame.getRestartButton().setEnabled(true);
 
                 for (int i = 0; i < 8; i++) {//遍历哪一个can move to
                     for (int j = 0; j < 8; j++) {
@@ -71,7 +80,18 @@ public class ClickController {
                     }
                 }
                 if (chessboard.getGameMode() != GameMode.PVP) {
-                    chessboard.AIMove();
+                    //TODO:: 底线升变时要延迟执行 以及游戏结束后就不要再行棋了
+                    ChessGameFrame.getInstance().setSaveButtonEnabled(false);
+                    ChessGameFrame.getInstance().setRestartButton(false);
+                    Timer timer = new Timer(2000, e -> {
+
+                        chessboard.AIMove();
+                        ChessGameFrame.getInstance().setSaveButtonEnabled(true);
+                        ChessGameFrame.getInstance().setRestartButton(true);
+                    });
+                    timer.setRepeats(false);
+                    timer.start();
+
                 }
             }
         }

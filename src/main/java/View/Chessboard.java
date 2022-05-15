@@ -44,8 +44,6 @@ public class Chessboard extends JComponent {
     HashMap<String, Integer> asyncTasksSteps = new HashMap<String, Integer>();
     protected Archive archive;
     private JLabel statusLabel = new JLabel();
-    private JButton restartButton;
-    private GameMode gameMode;
     private HashMap<ChessComponent, ArrayList<ChessComponent>> aWhiteChessToWhichItCanMove = new HashMap<>();
     private HashMap<ChessComponent, ArrayList<ChessComponent>> aBlackChessToWhichItCanMove = new HashMap<>();
     private ArrayList<ChessComponent> blackChessArray = new ArrayList<>();
@@ -57,19 +55,7 @@ public class Chessboard extends JComponent {
     private boolean inTest = false;
 
     public GameMode getGameMode() {
-        return gameMode;
-    }
-
-    public void setGameMode(GameMode gameMode) {
-        this.gameMode = gameMode;
-    }
-
-    public JButton getRestartButton() {
-        return restartButton;
-    }
-
-    public void setRestartButton(JButton restartButton) {
-        this.restartButton = restartButton;
+        return ChessGameFrame.getGameMode();
     }
 
     public int getWhiteKingX() {
@@ -141,7 +127,7 @@ public class Chessboard extends JComponent {
         CHESS_SIZE = width / 8;
         System.out.printf("chessboard size = %d, chess size = %d\n", width, CHESS_SIZE);
 
-        archive = new Archive();
+        archive = new Archive(getGameMode());
         archive.initialize();
 
         initialAllChess();
@@ -229,7 +215,7 @@ public class Chessboard extends JComponent {
 
     public void swapColor() {
         currentColor = currentColor == ChessColor.BLACK ? ChessColor.WHITE : ChessColor.BLACK;
-        checkKingAttacked(chessComponents, gameMode);
+        checkKingAttacked(chessComponents, getGameMode());
         statusLabel.setText("Current Color: " + currentColor.getName());
         statusLabel.repaint();
     }
@@ -304,7 +290,7 @@ public class Chessboard extends JComponent {
 
         archive.initialize();
 
-        if (!inTest){
+        if (!inTest) {
             ChessGameFrame.getInstance().setSaveButtonEnabled(false);
             addAsyncTask(() -> {
                 ChessGameFrame.getInstance().setSaveButtonEnabled(true);
@@ -422,6 +408,7 @@ public class Chessboard extends JComponent {
     public ArrayList<HashMap<ChessComponent, ArrayList<ChessComponent>>> scanTheChessboard() {
         int blackKingCounter = 0;
         int whiteKingCounter = 0;
+        blackChessArray.clear();
         for (int x1 = 0; x1 < 8; x1++) {
             for (int y1 = 0; y1 < 8; y1++) {
                 if (chessComponents[x1][y1].getChessColor() == ChessColor.BLACK) {
@@ -453,9 +440,11 @@ public class Chessboard extends JComponent {
 
         if (whiteKingCounter != 1) {
             new LoseDialog(ChessColor.BLACK);
+            return new ArrayList<>();
         }
         if (blackKingCounter != 1) {
             new LoseDialog(ChessColor.WHITE);
+            return new ArrayList<>();
         }
 
         a:
@@ -466,7 +455,7 @@ public class Chessboard extends JComponent {
                         if (chessComponents[i][i1].getToWhereCanMove().contains(chessComponents[BlackKingX][BlackKingY])) {
                             if (chessComponents[BlackKingX][BlackKingY].getToWhereCanMove().size() == 0) {
                                 new LoseDialog(ChessColor.WHITE);
-                                break a;
+                                return new ArrayList<>();
                             }
 
                             int counterWhereCanMove = 0;
@@ -476,7 +465,7 @@ public class Chessboard extends JComponent {
                                 }
                                 if (counterWhereCanMove == chessComponents[BlackKingX][BlackKingY].getToWhereCanMove().size()) {
                                     new LoseDialog(ChessColor.WHITE);
-                                    break a;
+                                    return new ArrayList<>();
                                 }
                             }
 
@@ -489,7 +478,7 @@ public class Chessboard extends JComponent {
                         if (chessComponents[i][i1].getToWhereCanMove().contains(chessComponents[whiteKingX][whiteKingY])) {
                             if (chessComponents[whiteKingX][whiteKingY].getToWhereCanMove().size() == 0) {
                                 new LoseDialog(ChessColor.BLACK);
-                                break a;
+                                return new ArrayList<>();
                             }
 
                             int counterWhereCanMove = 0;
@@ -499,7 +488,7 @@ public class Chessboard extends JComponent {
                                 }
                                 if (counterWhereCanMove == chessComponents[whiteKingX][whiteKingY].getToWhereCanMove().size()) {
                                     new LoseDialog(ChessColor.BLACK);
-                                    break a;
+                                    return new ArrayList<>();
                                 }
                             }
 
@@ -568,7 +557,7 @@ public class Chessboard extends JComponent {
             random_chess = random.nextInt(upperbound_chess);
         }
 
-        if (gameMode == GameMode.PVEEasy) {
+        if (getGameMode() == GameMode.PVEEasy) {
             int upperbound_move = blackChessArray.get(random_chess).getToWhereCanMove().size();
             int random_move = random.nextInt(upperbound_move);
 
@@ -576,7 +565,7 @@ public class Chessboard extends JComponent {
             swapChessComponents(blackChessArray.get(random_chess), beSwapChess);
             swapColor();
         }
-        if (gameMode == GameMode.PVEHard) {
+        if (getGameMode() == GameMode.PVEHard) {
             int canEatNumber = 0;
             int whichChessCanEat = 0;
             int whichMoveCanEat = 0;
@@ -605,8 +594,6 @@ public class Chessboard extends JComponent {
             }
         }
     }
-
-
 
 
     public void checkKingAttacked(ChessComponent[][] chessComponents, GameMode gameMode) {

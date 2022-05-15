@@ -1,5 +1,12 @@
 package Model;
 
+import com.google.gson.annotations.SerializedName;
+
 public enum GameMode {
-    PVP, PVEEasy, PVEHard
+    @SerializedName("PVP")
+    PVP,
+    @SerializedName("PVEEasy")
+    PVEEasy,
+    @SerializedName("PVEHard")
+    PVEHard
 }

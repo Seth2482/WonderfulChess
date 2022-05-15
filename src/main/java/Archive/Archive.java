@@ -1,30 +1,31 @@
 package Archive;
 
 import Archive.DataModel.ChessDataModel;
-import Archive.Exception.ArchiveException;
-import Archive.Exception.DuplicatedChessException;
-import Archive.Exception.InvalidChessboardSizeException;
-import Archive.Exception.InvalidStepException;
+import Archive.Exception.*;
 import Model.EmptySlotComponent;
-import View.ChessGameFrame;
+import Model.GameMode;
 import com.google.gson.*;
 import Model.ChessColor;
 import Model.ChessComponent;
 import Archive.DataModel.ChessDataModelDeserializer;
 import View.Chessboard;
+import com.google.gson.annotations.SerializedName;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 
 public class Archive {
     private Date createdAt;
-    private String name;
+    @SerializedName("gameMode")
+    private GameMode gameMode;
     private ArrayList<Step> steps;
     private ChessColor currentColor;
     private String path;
 
-    public Archive() {
+    public Archive(GameMode gameMode) {
+        this.gameMode = gameMode;
         createdAt = new Date();
     }
 
@@ -78,7 +79,7 @@ public class Archive {
             JsonParseException {
         BufferedReader in = new BufferedReader(new FileReader(path));
         Archive archive = getGson().fromJson(in, Archive.class);
-        if (archive == null){
+        if (archive == null) {
             throw new JsonParseException("The file is empty!");
         }
 
@@ -138,6 +139,19 @@ public class Archive {
             throw new InvalidChessboardSizeException("Invalid chessboard size:" + getChessDataModels().length);
         }
 
+        if (this.currentColor == null) {
+            throw new InvalidChessColorException("Missing field: currentColor.");
+        }
+
+        if (this.gameMode == null) {
+            throw new ArchiveException("Missing field: gameMode.");
+        }
+
+        if (!Arrays.asList(GameMode.values()).contains(gameMode)) {
+            throw new ArchiveException("Unexpected game mode: " + gameMode);
+
+        }
+
         ArrayList<String> existedChess = new ArrayList<>();
         for (int m = 0; m < getChessDataModels().length; m++) {
             if (getChessDataModels()[m].length > 8) {
@@ -183,5 +197,9 @@ public class Archive {
 
         }
 
+    }
+
+    public GameMode getGameMode() {
+        return gameMode;
     }
 }

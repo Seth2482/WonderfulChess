@@ -173,8 +173,10 @@ public class PawnChessComponent extends ChessComponent {
 
 class SideLineTransitionDialog extends JDialog {
     SideLineTransitionDialog(PawnChessComponent pawn) {
-        setVisible(true);
         setLayout(null);
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        setAlwaysOnTop(true); // 置顶
+        setModal(true); // 屏蔽父窗口
         setBounds(500, 300, 500, 150);
 
         JLabel statusLabel = new JLabel("Which chess do you want your pawn to be?");
@@ -222,6 +224,8 @@ class SideLineTransitionDialog extends JDialog {
             this.dispose();
         });
         add(buttonBishop);
+
+        setVisible(true);
     }
 }
 
