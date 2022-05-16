@@ -4,9 +4,7 @@ import Controller.ClickController;
 import View.Chessboard;
 import View.ChessboardPoint;
 
-
 import javax.swing.*;
-import javax.xml.transform.Source;
 import java.awt.*;
 import java.io.IOException;
 
@@ -15,8 +13,8 @@ public class PawnChessComponent extends ChessComponent {
     private static Image PAWN_BLACK;
 
     private final ChessColor thisChessColor;//record the color of chess;
-    private boolean isTheFirstMove = true;//是否是第一步
-    private boolean canBeEnAsPassant = false;//能否被别人当作过路兵吃掉
+    private boolean isTheFirstMove;//是否是第一步
+    private boolean canBeEnAsPassant;//能否被别人当作过路兵吃掉
 
     public boolean isCanBeEnAsPassant() {
         return canBeEnAsPassant;
@@ -76,21 +74,14 @@ public class PawnChessComponent extends ChessComponent {
             }//斜着吃子
 
             if (source.getX() - destination.getX() == factor && source.getY() == destination.getY()) {
-                if (!(chessComponents[destination.getX()][destination.getY()] instanceof EmptySlotComponent)) {
-                    return false;
-                }
-                return true;
+                return chessComponents[destination.getX()][destination.getY()] instanceof EmptySlotComponent;
             }
 
             if (source.getX() - destination.getX() == 2 * factor && source.getY() == destination.getY()) {
                 if (!(chessComponents[source.getX() - factor][source.getY()] instanceof EmptySlotComponent)) {
                     return false;
                 }
-                if (!(chessComponents[destination.getX()][destination.getY()] instanceof EmptySlotComponent)) {
-                    return false;
-                }
-
-                return true;
+                return chessComponents[destination.getX()][destination.getY()] instanceof EmptySlotComponent;
             }
             return false;
         } else {
@@ -118,11 +109,7 @@ public class PawnChessComponent extends ChessComponent {
                 }
             }//吃过路兵
 
-            if (source.getX() - destination.getX() == factor && source.getY() == destination.getY() && (chessComponents[destination.getX()][destination.getY()] instanceof EmptySlotComponent)) {
-                return true;
-            }
-
-            return false;
+            return source.getX() - destination.getX() == factor && source.getY() == destination.getY() && (chessComponents[destination.getX()][destination.getY()] instanceof EmptySlotComponent);
         }
     }
 
@@ -148,9 +135,7 @@ public class PawnChessComponent extends ChessComponent {
             canBeEnAsPassant = true;
 
             // 对手下完棋后 这个棋就不能吃了
-            Chessboard.invokeLater(() -> {
-                this.canBeEnAsPassant = false;
-            }, 2);
+            Chessboard.invokeLater(() -> this.canBeEnAsPassant = false, 2);
         }
     }
 

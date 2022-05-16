@@ -44,9 +44,8 @@ public class Chessboard extends JComponent {
     HashMap<String, Integer> asyncTasksSteps = new HashMap<String, Integer>();
     protected Archive archive;
     private JLabel statusLabel = new JLabel();
-    private HashMap<ChessComponent, ArrayList<ChessComponent>> aWhiteChessToWhichItCanMove = new HashMap<>();
-    private HashMap<ChessComponent, ArrayList<ChessComponent>> aBlackChessToWhichItCanMove = new HashMap<>();
     private ArrayList<ChessComponent> blackChessArray = new ArrayList<>();
+    private ArrayList<ChessComponent> whiteChessArray = new ArrayList<>();
     private boolean lose = false;
     private int whiteKingX = 7;
     private int whiteKingY = 4;
@@ -57,46 +56,6 @@ public class Chessboard extends JComponent {
 
     public GameMode getGameMode() {
         return ChessGameFrame.getGameMode();
-    }
-
-    public int getWhiteKingX() {
-        return whiteKingX;
-    }
-
-    public void setWhiteKingX(int whiteKingX) {
-        this.whiteKingX = whiteKingX;
-    }
-
-    public int getWhiteKingY() {
-        return whiteKingY;
-    }
-
-    public void setWhiteKingY(int whiteKingY) {
-        this.whiteKingY = whiteKingY;
-    }
-
-    public int getBlackKingX() {
-        return BlackKingX;
-    }
-
-    public void setBlackKingX(int blackKingX) {
-        BlackKingX = blackKingX;
-    }
-
-    public int getBlackKingY() {
-        return BlackKingY;
-    }
-
-    public void setBlackKingY(int blackKingY) {
-        BlackKingY = blackKingY;
-    }
-
-    public HashMap<ChessComponent, ArrayList<ChessComponent>> getaWhiteChessToWhichItCanMove() {
-        return aWhiteChessToWhichItCanMove;
-    }
-
-    public HashMap<ChessComponent, ArrayList<ChessComponent>> getaBlackChessToWhichItCanMove() {
-        return aBlackChessToWhichItCanMove;
     }
 
     public void setStatusLabelText(String text) {
@@ -217,6 +176,8 @@ public class Chessboard extends JComponent {
     public void swapColor() {
         currentColor = currentColor == ChessColor.BLACK ? ChessColor.WHITE : ChessColor.BLACK;
         checkKingAttacked(chessComponents, getGameMode());
+        checkKingExist();
+        checkWhetherKingCanEscape();
         statusLabel.setText("Current Color: " + currentColor.getName());
         statusLabel.repaint();
     }
@@ -245,14 +206,14 @@ public class Chessboard extends JComponent {
         putChessOnBoard(chessComponent);
     }
 
-    private void initQueenOnBoard(int row, int col, ChessColor color) {
-        ChessComponent chessComponent = new QueenChessComponent(new ChessboardPoint(row, col), calculatePoint(row, col), color, clickController, CHESS_SIZE);
+    private void initQueenOnBoard(int row, ChessColor color) {
+        ChessComponent chessComponent = new QueenChessComponent(new ChessboardPoint(row, 3), calculatePoint(row, 3), color, clickController, CHESS_SIZE);
         chessComponent.setVisible(true);
         putChessOnBoard(chessComponent);
     }
 
-    private void initKingOnBoard(int row, int col, ChessColor color) {
-        ChessComponent chessComponent = new KingChessComponent(new ChessboardPoint(row, col), calculatePoint(row, col), color, clickController, CHESS_SIZE);
+    private void initKingOnBoard(int row, ChessColor color) {
+        ChessComponent chessComponent = new KingChessComponent(new ChessboardPoint(row, 4), calculatePoint(row, 4), color, clickController, CHESS_SIZE);
         chessComponent.setVisible(true);
         putChessOnBoard(chessComponent);
     }
@@ -275,11 +236,11 @@ public class Chessboard extends JComponent {
         initKnightOnBoard(CHESSBOARD_SIZE - 1, 1, ChessColor.WHITE);
         initKnightOnBoard(CHESSBOARD_SIZE - 1, CHESSBOARD_SIZE - 2, ChessColor.WHITE);
 
-        initQueenOnBoard(0, 3, ChessColor.BLACK);
-        initQueenOnBoard(CHESSBOARD_SIZE - 1, 3, ChessColor.WHITE);
+        initQueenOnBoard(0, ChessColor.BLACK);
+        initQueenOnBoard(CHESSBOARD_SIZE - 1, ChessColor.WHITE);
 
-        initKingOnBoard(0, 4, ChessColor.BLACK);
-        initKingOnBoard(CHESSBOARD_SIZE - 1, 4, ChessColor.WHITE);
+        initKingOnBoard(0, ChessColor.BLACK);
+        initKingOnBoard(CHESSBOARD_SIZE - 1, ChessColor.WHITE);
 
         for (int i = 0; i < 8; i++) {
             initPawnOnBoard(1, i, ChessColor.BLACK);
@@ -406,27 +367,30 @@ public class Chessboard extends JComponent {
         putChessOnBoard(chessComponent);
     }
 
-    public ArrayList<HashMap<ChessComponent, ArrayList<ChessComponent>>> scanTheChessboard() {
-        int blackKingCounter = 0;
-        int whiteKingCounter = 0;
+    public void scanTheChessboard() {
+        whiteChessArray.clear();
         blackChessArray.clear();
+
         for (int x1 = 0; x1 < 8; x1++) {
             for (int y1 = 0; y1 < 8; y1++) {
                 if (chessComponents[x1][y1].getChessColor() == ChessColor.BLACK && !(chessComponents[x1][y1] instanceof EmptySlotComponent)) {
                     blackChessArray.add(chessComponents[x1][y1]);
                 }
+                if (chessComponents[x1][y1].getChessColor() == ChessColor.WHITE && !(chessComponents[x1][y1] instanceof EmptySlotComponent)) {
+                    whiteChessArray.add(chessComponents[x1][y1]);
+                }
 
                 if (chessComponents[x1][y1] instanceof KingChessComponent && chessComponents[x1][y1].getChessColor() == ChessColor.WHITE) {
-                    whiteKingCounter++;
                     whiteKingX = x1;
                     whiteKingY = y1;
                 }
                 if (chessComponents[x1][y1] instanceof KingChessComponent && chessComponents[x1][y1].getChessColor() == ChessColor.BLACK) {
-                    blackKingCounter++;
                     BlackKingX = x1;
                     BlackKingY = y1;
                 }
+
                 chessComponents[x1][y1].getToWhereCanMove().clear();
+
                 for (int x2 = 0; x2 < 8; x2++) {
                     for (int y2 = 0; y2 < 8; y2++) {
                         if (!(chessComponents[x1][y1] instanceof EmptySlotComponent)) {
@@ -438,79 +402,6 @@ public class Chessboard extends JComponent {
                 }
             }
         }
-
-        if (whiteKingCounter != 1) {
-            new LoseDialog(ChessColor.BLACK);
-            return new ArrayList<>();
-        }
-        if (blackKingCounter != 1) {
-            new LoseDialog(ChessColor.WHITE);
-            return new ArrayList<>();
-        }
-
-        a:
-        for (int i = 0; i < 8; i++) {
-            for (int i1 = 0; i1 < 8; i1++) {
-                if (!(chessComponents[i][i1] instanceof EmptySlotComponent)) {
-                    if (chessComponents[i][i1].getChessColor() == ChessColor.WHITE) {
-                        if (chessComponents[i][i1].getToWhereCanMove().contains(chessComponents[BlackKingX][BlackKingY])) {
-                            if (chessComponents[BlackKingX][BlackKingY].getToWhereCanMove().size() == 0 && !lose) {
-                                lose = true;
-                                new LoseDialog(ChessColor.WHITE);
-                                return new ArrayList<>();
-                            }
-
-                            int counterWhereCanMove = 0;
-                            for (int i2 = 0; i2 < chessComponents[BlackKingX][BlackKingY].getToWhereCanMove().size(); i2++) {
-                                if (chessComponents[i][i1].getToWhereCanMove().contains(chessComponents[BlackKingX][BlackKingY].getToWhereCanMove().get(i2))) {
-                                    counterWhereCanMove++;
-                                }
-                                if (counterWhereCanMove == chessComponents[BlackKingX][BlackKingY].getToWhereCanMove().size() && !lose) {
-                                    lose = true;
-                                    new LoseDialog(ChessColor.WHITE);
-                                    return new ArrayList<>();
-                                }
-                            }
-
-                            break a;
-                        }
-                        aWhiteChessToWhichItCanMove.put(chessComponents[i][i1], chessComponents[i][i1].getToWhereCanMove());
-                    }
-                    if (chessComponents[i][i1].getChessColor() == ChessColor.BLACK) {
-
-                        if (chessComponents[i][i1].getToWhereCanMove().contains(chessComponents[whiteKingX][whiteKingY])) {
-                            if (chessComponents[whiteKingX][whiteKingY].getToWhereCanMove().size() == 0 && !lose) {
-                                lose = true;
-                                new LoseDialog(ChessColor.BLACK);
-                                return new ArrayList<>();
-                            }
-
-                            int counterWhereCanMove = 0;
-                            for (int i2 = 0; i2 < chessComponents[whiteKingX][whiteKingY].getToWhereCanMove().size(); i2++) {
-                                if (chessComponents[i][i1].getToWhereCanMove().contains(chessComponents[whiteKingX][whiteKingY].getToWhereCanMove().get(i2))) {
-                                    counterWhereCanMove++;
-                                }
-                                if (counterWhereCanMove == chessComponents[whiteKingX][whiteKingY].getToWhereCanMove().size() && !lose) {
-                                    lose = true;
-                                    new LoseDialog(ChessColor.BLACK);
-                                    return new ArrayList<>();
-                                }
-                            }
-
-                            break a;
-//
-                        }
-                        aBlackChessToWhichItCanMove.put(chessComponents[i][i1], chessComponents[i][i1].getToWhereCanMove());
-                    }
-                }
-            }
-        }
-
-        ArrayList<HashMap<ChessComponent, ArrayList<ChessComponent>>> scannerChessboardResult = new ArrayList<>();
-        scannerChessboardResult.add(aWhiteChessToWhichItCanMove);
-        scannerChessboardResult.add(aBlackChessToWhichItCanMove);
-
-        return scannerChessboardResult;
     }
 
     public int getCurrentStep() {
@@ -627,5 +518,78 @@ public class Chessboard extends JComponent {
                 }
             }
         }
+    }
+
+    public void checkKingExist() {
+        int blackKingCounter = 0;
+        int whiteKingCounter = 0;
+
+        for (int x1 = 0; x1 < 8; x1++) {
+            for (int y1 = 0; y1 < 8; y1++) {
+                if (chessComponents[x1][y1] instanceof KingChessComponent && chessComponents[x1][y1].getChessColor() == ChessColor.WHITE) {
+                    whiteKingCounter++;
+                }
+                if (chessComponents[x1][y1] instanceof KingChessComponent && chessComponents[x1][y1].getChessColor() == ChessColor.BLACK) {
+                    blackKingCounter++;
+                }
+            }
+        }
+        if (whiteKingCounter == 0) {
+            new LoseDialog(ChessColor.BLACK);
+        }
+        if (blackKingCounter == 0) {
+            new LoseDialog(ChessColor.WHITE);
+        }
+    }
+
+    public void checkWhetherKingCanEscape() {
+        scanTheChessboard();
+
+        ArrayList<ChessComponent> allWhereBlackCanMove = new ArrayList<>();
+        ArrayList<ChessComponent> allWhereWhiteCanMove = new ArrayList<>();
+
+        for (ChessComponent c : blackChessArray) {
+            for (ChessComponent c2 : c.getToWhereCanMove()) {
+                if (!allWhereBlackCanMove.contains(c2)) {
+                    allWhereBlackCanMove.add(c2);
+                }
+            }
+        }
+
+        for (ChessComponent c : whiteChessArray) {
+            for (ChessComponent c2 : c.getToWhereCanMove()) {
+                if (!allWhereWhiteCanMove.contains(c2)) {
+                    allWhereWhiteCanMove.add(c2);
+                }
+            }
+        }
+
+        ArrayList<ChessComponent> whereWhiteKingCanEscape = (ArrayList<ChessComponent>) chessComponents[whiteKingX][whiteKingY].getToWhereCanMove().clone();
+        ArrayList<ChessComponent> whereBlackKingCanEscape = (ArrayList<ChessComponent>) chessComponents[BlackKingX][BlackKingY].getToWhereCanMove().clone();
+
+        whereWhiteKingCanEscape.addAll(chessComponents[whiteKingX][whiteKingY].getToWhereCanMove());
+
+        whereBlackKingCanEscape.addAll(chessComponents[BlackKingX][BlackKingY].getToWhereCanMove());
+
+        for (ChessComponent bMove : chessComponents[BlackKingX][BlackKingY].getToWhereCanMove()) {
+            if (allWhereWhiteCanMove.contains(bMove)) {
+                whereBlackKingCanEscape.remove(bMove);
+            }
+        }
+
+        for (ChessComponent wMove : chessComponents[whiteKingX][whiteKingY].getToWhereCanMove()) {
+            if (allWhereBlackCanMove.contains(wMove)) {
+                whereWhiteKingCanEscape.remove(wMove);
+            }
+        }
+
+        if (whereBlackKingCanEscape.size() == 0&&allWhereWhiteCanMove.contains(chessComponents[BlackKingX][BlackKingY])) {
+            new LoseDialog(ChessColor.WHITE);
+        }
+
+        if (whereWhiteKingCanEscape.size() == 0&&allWhereBlackCanMove.contains(chessComponents[whiteKingX][whiteKingY])) {
+            new LoseDialog(ChessColor.BLACK);
+        }
+
     }
 }
