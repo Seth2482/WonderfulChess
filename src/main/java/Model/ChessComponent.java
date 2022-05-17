@@ -173,6 +173,6 @@ public abstract class ChessComponent extends JComponent {
     }
 
     protected BufferedImage getImage(String relativePath) throws IOException {
-        return ImageIO.read(new File(getClass().getClassLoader().getResource(relativePath).getFile()));
+        return ImageIO.read(getClass().getClassLoader().getResourceAsStream(relativePath));
     }
 }
