@@ -8,12 +8,10 @@ import Model.KnightChessComponent;
 import Model.PawnChessComponent;
 import Model.QueenChessComponent;
 import Archive.Archive;
-import View.Dialog.KingAttackedDialog;
 import View.Dialog.LoseDialog;
 import VisualChessboard.*;
 
 import javax.swing.*;
-import javax.swing.text.Document;
 import java.awt.*;
 import java.util.*;
 import java.util.List;
@@ -47,6 +45,8 @@ public class Chessboard extends JComponent {
     protected Archive archive;
     private JLabel statusLabel = new JLabel();
     private JLabel roundLabel = new JLabel();
+    private JLabel whiteKingAlertLabel = new JLabel();
+    private JLabel blackKingAlertLabel = new JLabel();
     private ArrayList<ChessComponent> blackChessArray = new ArrayList<>();
     private ArrayList<ChessComponent> whiteChessArray = new ArrayList<>();
     private boolean lose = false;
@@ -77,6 +77,14 @@ public class Chessboard extends JComponent {
 
     public void setRoundLabelText(String text) {
         roundLabel.setText(text);
+    }
+
+    public void setWhiteKingAlertLabel(JLabel whiteKingAlertLabel) {
+        this.whiteKingAlertLabel = whiteKingAlertLabel;
+    }
+
+    public void setBlackKingAlertLabel(JLabel blackKingAlertLabel) {
+        this.blackKingAlertLabel = blackKingAlertLabel;
     }
 
     public Chessboard(int width, int height, Archive archive) {
@@ -462,7 +470,7 @@ public class Chessboard extends JComponent {
             }
         }
 
-a:
+        a:
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
                 if (!(chessComponents[i][j] instanceof EmptySlotComponent)) {
@@ -583,7 +591,7 @@ a:
                         if (whiteLose) {
                             new LoseDialog(ChessColor.BLACK);
                         } else {
-                            new KingAttackedDialog(ChessColor.BLACK);
+                            blackKingAlertLabel.setVisible(true);
                             return true;
                         }
 
@@ -597,7 +605,7 @@ a:
                             if (blackLose) {
                                 new LoseDialog(ChessColor.WHITE);
                             } else {
-                                new KingAttackedDialog(ChessColor.WHITE);
+                                blackKingAlertLabel.setVisible(true);
                                 return true;
                             }
                         }
@@ -606,9 +614,11 @@ a:
 
             }
         }
+
+        blackKingAlertLabel.setVisible(false);
+        whiteKingAlertLabel.setVisible(false);
         return false;
     }
-
 
 
     public void checkKingExist() {
@@ -760,30 +770,27 @@ a:
         }
 
 
-            for (ChessComponent wChess : whiteChessArray) {
-                for (ChessComponent wChessCanMove : wChess.getToWhereCanMove()) {
+        for (ChessComponent wChess : whiteChessArray) {
+            for (ChessComponent wChessCanMove : wChess.getToWhereCanMove()) {
 
-                    int sourceX = wChess.getChessboardPoint().getX();
-                    int sourceY = wChess.getChessboardPoint().getY();
+                int sourceX = wChess.getChessboardPoint().getX();
+                int sourceY = wChess.getChessboardPoint().getY();
 
-                    int targetX = wChessCanMove.getChessboardPoint().getX();
-                    int targetY = wChessCanMove.getChessboardPoint().getY();
+                int targetX = wChessCanMove.getChessboardPoint().getX();
+                int targetY = wChessCanMove.getChessboardPoint().getY();
 
-                    concreteChessGame.moveChess(sourceX, sourceY, targetX, targetY);
+                concreteChessGame.moveChess(sourceX, sourceY, targetX, targetY);
 
-                    ChessComponent[][] chessComponentsAfter = loadChessboard(concreteChessGame.getChessboardGraph());
+                ChessComponent[][] chessComponentsAfter = loadChessboard(concreteChessGame.getChessboardGraph());
 
-                    scanTheChessboardAndJudgeKingAttacked(chessComponentsAfter);
+                scanTheChessboardAndJudgeKingAttacked(chessComponentsAfter);
 
-                    if (whiteLose) {
-                        break;
-                    }
-
+                if (whiteLose) {
+                    break;
                 }
+
             }
-
-
-
+        }
 
 
     }

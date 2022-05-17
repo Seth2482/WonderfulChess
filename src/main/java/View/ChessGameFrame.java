@@ -28,22 +28,12 @@ public class ChessGameFrame extends JFrame {
     private JButton restartButton;
     private JButton repentButton = new JButton("Placeholder");
     private JLabel roundLabel = new JLabel("Round #1");
+    private JLabel whiteKingAlertLabel = new JLabel("White king is being attacked!");
+    private JLabel blackKingAlertLabel = new JLabel("Black king is being attacked!");
 
 
     public ChessGameFrame(int width, int height, GameMode gameMode) {
-        basicInitialize(width, height);
-        ChessGameFrame.gameMode = gameMode;
-        // 不要改代码的顺序 不然会很难收场！！
-        // 已经成屎山代码了
-        addSaveButton();
-        addRestartButton();
-        addStatusLabel();
-        addRoundLabel();
-        addChessboard();
-        Chessboard.getInstance().setStatusLabelText("Current Color: " + getChessboard().getCurrentColor().getName());
-        if (gameMode == GameMode.PVP) {
-            addRepentButton();
-        }
+        this(width, height, null, gameMode);
 
     }
 
@@ -55,7 +45,12 @@ public class ChessGameFrame extends JFrame {
         addRestartButton();
         addStatusLabel();
         addRoundLabel();
-        addChessboard(archive);
+        addKingAlertLabels();
+        if (archive != null) {
+            addChessboard(archive);
+        } else {
+            addChessboard();
+        }
         Chessboard.getInstance().setStatusLabelText("Current Color: " + getChessboard().getCurrentColor().getName());
         if (gameMode == GameMode.PVP) {
             addRepentButton();
@@ -67,7 +62,7 @@ public class ChessGameFrame extends JFrame {
         this.WIDTH = width;
         this.HEIGHT = height;
         this.CHESSBOARD_SIZE = HEIGHT * 4 / 5;
-        this.instance = this;
+        instance = this;
 
         setSize(WIDTH, HEIGHT);
         setLocationRelativeTo(null); // Center the window.
@@ -80,19 +75,19 @@ public class ChessGameFrame extends JFrame {
      * 在游戏面板中添加棋盘
      */
     private void addChessboard() {
-        chessboard = new Chessboard(CHESSBOARD_SIZE, CHESSBOARD_SIZE);
-        chessboard.setStatusLabel(this.statusLabel);
-        chessboard.setRoundLabel(this.roundLabel);
-        gameController = new GameController(chessboard);
-        chessboard.setLocation(HEIGHT / 10, HEIGHT / 10);
-        add(chessboard);
-        this.repaint();
+        this.addChessboard(null);
     }
 
     private void addChessboard(Archive archive) {
-        Chessboard chessboard = new Chessboard(CHESSBOARD_SIZE, CHESSBOARD_SIZE, archive);
+        if (archive != null) {
+            chessboard = new Chessboard(CHESSBOARD_SIZE, CHESSBOARD_SIZE, archive);
+        } else {
+            chessboard = new Chessboard(CHESSBOARD_SIZE, CHESSBOARD_SIZE);
+        }
         chessboard.setStatusLabel(this.statusLabel);
         chessboard.setRoundLabel(this.roundLabel);
+        chessboard.setWhiteKingAlertLabel(whiteKingAlertLabel);
+        chessboard.setBlackKingAlertLabel(blackKingAlertLabel);
         gameController = new GameController(chessboard);
         chessboard.setLocation(HEIGHT / 10, HEIGHT / 10);
         add(chessboard);
@@ -157,13 +152,31 @@ public class ChessGameFrame extends JFrame {
         });
     }
 
-    private void addRoundLabel(){
+    private void addRoundLabel() {
         roundLabel = new JLabel("Round #1");
         roundLabel.setLocation(70, 10);
-        roundLabel.setSize(300, 60);
+        roundLabel.setSize(100, 60);
         roundLabel.setFont(new Font("Rockwell", Font.BOLD, 20));
         add(roundLabel);
     }
+
+    private void addKingAlertLabels() {
+        int i =0;
+        for (JLabel label : new JLabel[]{whiteKingAlertLabel, blackKingAlertLabel}) {
+            if (i ==0){
+                label.setLocation(300, (int) (HEIGHT*0.88));
+            }else {
+                label.setLocation(300, 10);
+            }
+            label.setSize(300, 60);
+            label.setFont(new Font("Rockwell", Font.BOLD, 20));
+            label.setForeground(Color.decode("#F44336"));
+            label.setVisible(false);
+            add(label);
+            i++;
+        }
+    }
+
 
     public void setActionButtonsEnabled(boolean enabled) {
         restartButton.setEnabled(enabled);

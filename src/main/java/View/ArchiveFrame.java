@@ -63,6 +63,8 @@ public class ArchiveFrame extends JFrame {
                         return "Wonderful Chess Archive (*.wdfc.json)";
                     }
                 });
+                setFileChooserFont(chooser.getComponents());
+
 
                 if (chooser.showOpenDialog(instance) == JFileChooser.APPROVE_OPTION) {
                     archivePath.setText(chooser.getSelectedFile().getAbsolutePath());
@@ -126,6 +128,16 @@ public class ArchiveFrame extends JFrame {
                 confirm.setEnabled(enabled);
             }
         });
+    }
+
+    public void setFileChooserFont(Component[] comp) {
+        for (int x = 0; x < comp.length; x++) {
+            if (comp[x] instanceof Container) setFileChooserFont(((Container) comp[x]).getComponents());
+            try {
+                comp[x].setFont(new Font("Segoe", Font.PLAIN, 15));
+            } catch (Exception e) {
+            }//do nothing
+        }
     }
 
     private void createUIComponents() {
@@ -208,4 +220,5 @@ public class ArchiveFrame extends JFrame {
     public JComponent $$$getRootComponent$$$() {
         return MainPanel;
     }
+
 }

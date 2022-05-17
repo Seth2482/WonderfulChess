@@ -5,12 +5,8 @@ import Model.*;
 import View.ChessGameFrame;
 import View.Chessboard;
 import View.ChessboardPoint;
-import View.Dialog.KingAttackedDialog;
-import View.Dialog.LoseDialog;
 
 import javax.swing.*;
-import java.awt.*;
-import java.util.concurrent.TimeUnit;
 
 public class ClickController {
     private final Chessboard chessboard;

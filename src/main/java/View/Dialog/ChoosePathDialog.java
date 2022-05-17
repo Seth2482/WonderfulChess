@@ -46,6 +46,8 @@ public class ChoosePathDialog extends JDialog {
             }
         });
         chooser.setDialogTitle("Specify a file to save");
+        setFileChooserFont(chooser.getComponents());
+
         instance = this;
 
 
@@ -123,6 +125,16 @@ public class ChoosePathDialog extends JDialog {
         dispose();
     }
 
+    public void setFileChooserFont(Component[] comp) {
+        for (int x = 0; x < comp.length; x++) {
+            if (comp[x] instanceof Container) setFileChooserFont(((Container) comp[x]).getComponents());
+            try {
+                comp[x].setFont(new Font("Segoe", Font.PLAIN, 15));
+            } catch (Exception e) {
+            }//do nothing
+        }
+    }
+
     public static void main(String[] args) {
         ChoosePathDialog dialog = new ChoosePathDialog();
         dialog.pack();
@@ -187,4 +199,5 @@ public class ChoosePathDialog extends JDialog {
     public JComponent $$$getRootComponent$$$() {
         return contentPane;
     }
+
 }
