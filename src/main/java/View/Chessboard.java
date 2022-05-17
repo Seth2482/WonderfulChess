@@ -439,11 +439,13 @@ public class Chessboard extends JComponent {
         }
     }
 
-    public void scanTheChessboardAndJudgeKingAttacked(ChessComponent[][] chessComponents) {
+    public int[] scanTheChessboardAndJudgeKingAttacked(ChessComponent[][] chessComponents) {
+        int[] recore = new int[2];
         int whiteKingX = 7;
         int whiteKingY = 4;
         int BlackKingX = 0;
         int BlackKingY = 4;
+
 
         for (int x1 = 0; x1 < 8; x1++) {
             for (int y1 = 0; y1 < 8; y1++) {
@@ -455,6 +457,7 @@ public class Chessboard extends JComponent {
                     BlackKingX = x1;
                     BlackKingY = y1;
                 }
+
 
                 chessComponents[x1][y1].getToWhereCanMove().clear();
 
@@ -474,21 +477,27 @@ public class Chessboard extends JComponent {
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
                 if (!(chessComponents[i][j] instanceof EmptySlotComponent)) {
+
+
                     if (chessComponents[i][j].getChessColor() == ChessColor.WHITE) {
                         if (chessComponents[i][j].getToWhereCanMove().contains(chessComponents[BlackKingX][BlackKingY])) {
-                            blackLose = true;
+                            recore[0] = 1;
                             break a;
                         }
-                    } else {
-                        if (chessComponents[i][j].getToWhereCanMove().contains(chessComponents[whiteKingX][whiteKingY])) {
-                            whiteLose = true;
-                            break a;
-                        }
+
+
                     }
+
+                    if (chessComponents[i][j].getToWhereCanMove().contains(chessComponents[whiteKingX][whiteKingY]) && chessComponents[i][j].getChessColor() == ChessColor.BLACK) {
+                        recore[1] = 1;
+                        break a;
+                    }
+
                 }
             }
         }
 
+        return recore;
     }
 
     public int getCurrentStep() {
@@ -744,11 +753,16 @@ public class Chessboard extends JComponent {
     }
 
     public void CheckKingCanAlive() {
-        ConcreteChessGame concreteChessGame = new ConcreteChessGame();
-        concreteChessGame.loadChessGame(captureChessboardPicture());
+        int blackShouldBe = 0;
+        int whiteShouldBe = 0;
+        int blackCounter = 0;
+        int whiteCounter = 0;
 
         for (ChessComponent bChess : blackChessArray) {
             for (ChessComponent bChessCanMove : bChess.getToWhereCanMove()) {
+                blackShouldBe++;
+                ConcreteChessGame concreteChessGame = new ConcreteChessGame();
+                concreteChessGame.loadChessGame(captureChessboardPicture());
 
                 int sourceX = bChess.getChessboardPoint().getX();
                 int sourceY = bChess.getChessboardPoint().getY();
@@ -760,18 +774,24 @@ public class Chessboard extends JComponent {
 
                 ChessComponent[][] chessComponentsAfter = loadChessboard(concreteChessGame.getChessboardGraph());
 
-                scanTheChessboardAndJudgeKingAttacked(chessComponentsAfter);
-
-                if (blackLose) {
-                    break;
+                if (scanTheChessboardAndJudgeKingAttacked(chessComponentsAfter)[0] == 1) {
+                    blackCounter++;
                 }
 
+
             }
+        }
+
+        if (blackCounter == blackShouldBe) {
+            blackLose = true;
         }
 
 
         for (ChessComponent wChess : whiteChessArray) {
             for (ChessComponent wChessCanMove : wChess.getToWhereCanMove()) {
+                whiteShouldBe++;
+                ConcreteChessGame concreteChessGame = new ConcreteChessGame();
+                concreteChessGame.loadChessGame(captureChessboardPicture());
 
                 int sourceX = wChess.getChessboardPoint().getX();
                 int sourceY = wChess.getChessboardPoint().getY();
@@ -785,11 +805,15 @@ public class Chessboard extends JComponent {
 
                 scanTheChessboardAndJudgeKingAttacked(chessComponentsAfter);
 
-                if (whiteLose) {
-                    break;
+                if (scanTheChessboardAndJudgeKingAttacked(chessComponentsAfter)[1] == 1) {
+                    whiteCounter++;
                 }
 
+
             }
+        }
+        if (whiteCounter == whiteShouldBe) {
+            whiteLose = true;
         }
 
 

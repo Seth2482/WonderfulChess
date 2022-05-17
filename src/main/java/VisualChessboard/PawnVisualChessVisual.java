@@ -4,11 +4,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PawnVisualChessVisual extends ChessComponentVisual {
+    private boolean firstMove = true;
+
     @Override
     public List<ChessboardPointVisual> canMoveTo() {
+        List<ChessboardPointVisual> chessboardPointVisuals = new ArrayList<>();
+
         int factor = getChessColor() == ChessColorVisual.WHITE ? -1 : 1;
 
-        return new ArrayList<>();
+        if (firstMove) {
+            chessboardPointVisuals.add(new ChessboardPointVisual(getSource().getX() + factor, getSource().getY()));
+            chessboardPointVisuals.add(new ChessboardPointVisual(getSource().getX() + 2 * factor, getSource().getY()));
+        } else {
+            chessboardPointVisuals.add(new ChessboardPointVisual(getSource().getX() + factor, getSource().getY()));
+        }
+
+        return chessboardPointVisuals;
     }
 
     @Override
