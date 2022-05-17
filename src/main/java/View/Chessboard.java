@@ -191,8 +191,6 @@ public class Chessboard extends JComponent {
         checkKingAttacked(chessComponents, getGameMode());
         checkKingExist();
         statusLabel.setText("Current Color: " + currentColor.getName());
-        checkWhetherKingCanEscape();
-        setStatusLabelText("Current Color: " + currentColor.getName());
         updateRoundLabel();
         statusLabel.repaint();
     }
@@ -277,6 +275,7 @@ public class Chessboard extends JComponent {
             }, 1);
         }
 
+//        this.scanTheChessboard();
     }
 
 
@@ -336,6 +335,7 @@ public class Chessboard extends JComponent {
         }
 
         ChessComponent[][] chessComponents = archive.getChessComponents();
+
         for (int m = 0; m < chessComponents.length; m++) {
             for (int n = 0; n < chessComponents[m].length; n++) {
                 ChessComponent chessComponent = chessComponents[m][n];
@@ -633,6 +633,7 @@ a:
         }
     }
 
+
     public void repent() {
         if (!canRepent()) return;
         // 清除所有的棋子
@@ -666,8 +667,6 @@ a:
         return !archive.isEmpty();
     }
 
-    public void checkWhetherKingCanEscape() {
-        scanTheChessboard();
 
     public List<String> captureChessboardPicture() {
         List<String> chessboardGraph = new ArrayList<>();
@@ -724,6 +723,14 @@ a:
         }
 
         return chessboardGraph;
+    }
+
+    public void updateRoundLabel() {
+        setRoundLabelText(String.format("Round #%d", getRound()));
+    }
+
+    public int getRound() {
+        return (int) Math.ceil((float) currentStep / 2);
     }
 
     public void CheckKingCanAlive() {
@@ -820,32 +827,18 @@ a:
                     chessComponents[i][i1].setChessboardPoint(new ChessboardPoint(i, i1));
                 }
 
-        if (whereBlackKingCanEscape.size() == 0 && allWhereWhiteCanMove.contains(chessComponents[BlackKingX][BlackKingY])) {
-            new LoseDialog(ChessColor.WHITE);
-        }
                 if (str.get(i).charAt(i1) == 'q') {
                     chessComponents[i][i1] = new QueenChessComponent();
                     chessComponents[i][i1].setChessColor(ChessColor.WHITE);
                     chessComponents[i][i1].setChessboardPoint(new ChessboardPoint(i, i1));
                 }
 
-        if (whereWhiteKingCanEscape.size() == 0 && allWhereBlackCanMove.contains(chessComponents[whiteKingX][whiteKingY])) {
-            new LoseDialog(ChessColor.BLACK);
-        }
                 if (str.get(i).charAt(i1) == 'p') {
                     chessComponents[i][i1] = new PawnChessComponent();
                     chessComponents[i][i1].setChessColor(ChessColor.WHITE);
                     chessComponents[i][i1].setChessboardPoint(new ChessboardPoint(i, i1));
                 }
 
-    }
-
-    public void updateRoundLabel() {
-        setRoundLabelText(String.format("Round #%d", getRound()));
-    }
-
-    public int getRound() {
-        return (int) Math.ceil((float) currentStep / 2);
                 if (str.get(i).charAt(i1) == 'r') {
                     chessComponents[i][i1] = new RookChessComponent();
                     chessComponents[i][i1].setChessColor(ChessColor.WHITE);
