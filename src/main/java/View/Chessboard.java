@@ -10,6 +10,7 @@ import Model.QueenChessComponent;
 import Archive.Archive;
 import View.Dialog.KingAttackedDialog;
 import View.Dialog.LoseDialog;
+import VisualChessboard.*;
 
 import javax.swing.*;
 import javax.swing.text.Document;
@@ -54,6 +55,8 @@ public class Chessboard extends JComponent {
     private int BlackKingX = 0;
     private int BlackKingY = 4;
     private int currentStep = 1;
+    private boolean whiteLose = false;
+    private boolean blackLose = false;
     private boolean inTest = false;
 
     public GameMode getGameMode() {
@@ -187,8 +190,7 @@ public class Chessboard extends JComponent {
         currentColor = currentColor == ChessColor.BLACK ? ChessColor.WHITE : ChessColor.BLACK;
         checkKingAttacked(chessComponents, getGameMode());
         checkKingExist();
-        checkWhetherKingCanEscape();
-        setStatusLabelText("Current Color: " + currentColor.getName());
+        statusLabel.setText("Current Color: " + currentColor.getName());
         updateRoundLabel();
         statusLabel.repaint();
     }
@@ -273,6 +275,7 @@ public class Chessboard extends JComponent {
             }, 1);
         }
 
+//        this.scanTheChessboard();
     }
 
 
@@ -332,6 +335,7 @@ public class Chessboard extends JComponent {
         }
 
         ChessComponent[][] chessComponents = archive.getChessComponents();
+
         for (int m = 0; m < chessComponents.length; m++) {
             for (int n = 0; n < chessComponents[m].length; n++) {
                 ChessComponent chessComponent = chessComponents[m][n];
@@ -427,6 +431,58 @@ public class Chessboard extends JComponent {
         }
     }
 
+    public void scanTheChessboardAndJudgeKingAttacked(ChessComponent[][] chessComponents) {
+        int whiteKingX = 7;
+        int whiteKingY = 4;
+        int BlackKingX = 0;
+        int BlackKingY = 4;
+
+        for (int x1 = 0; x1 < 8; x1++) {
+            for (int y1 = 0; y1 < 8; y1++) {
+                if (chessComponents[x1][y1] instanceof KingChessComponent && chessComponents[x1][y1].getChessColor() == ChessColor.WHITE) {
+                    whiteKingX = x1;
+                    whiteKingY = y1;
+                }
+                if (chessComponents[x1][y1] instanceof KingChessComponent && chessComponents[x1][y1].getChessColor() == ChessColor.BLACK) {
+                    BlackKingX = x1;
+                    BlackKingY = y1;
+                }
+
+                chessComponents[x1][y1].getToWhereCanMove().clear();
+
+                for (int x2 = 0; x2 < 8; x2++) {
+                    for (int y2 = 0; y2 < 8; y2++) {
+                        if (!(chessComponents[x1][y1] instanceof EmptySlotComponent)) {
+                            if ((chessComponents[x1][y1].canMoveTo(chessComponents, new ChessboardPoint(x2, y2))) && (!chessComponents[x2][y2].getChessColor().equals(chessComponents[x1][y1].getChessColor()))) {
+                                chessComponents[x1][y1].setToWhereCanMove(chessComponents[x2][y2]);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+a:
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                if (!(chessComponents[i][j] instanceof EmptySlotComponent)) {
+                    if (chessComponents[i][j].getChessColor() == ChessColor.WHITE) {
+                        if (chessComponents[i][j].getToWhereCanMove().contains(chessComponents[BlackKingX][BlackKingY])) {
+                            blackLose = true;
+                            break a;
+                        }
+                    } else {
+                        if (chessComponents[i][j].getToWhereCanMove().contains(chessComponents[whiteKingX][whiteKingY])) {
+                            whiteLose = true;
+                            break a;
+                        }
+                    }
+                }
+            }
+        }
+
+    }
+
     public int getCurrentStep() {
         return currentStep;
     }
@@ -516,32 +572,44 @@ public class Chessboard extends JComponent {
     }
 
 
-    public void checkKingAttacked(ChessComponent[][] chessComponents, GameMode gameMode) {
+    public boolean checkKingAttacked(ChessComponent[][] chessComponents, GameMode gameMode) {
         scanTheChessboard();
-        a:
         for (int i = 0; i < 8; i++) {
             for (int i1 = 0; i1 < 8; i1++) {
+
+                if (chessComponents[i][i1].getChessColor() == ChessColor.BLACK) {
+                    if (chessComponents[i][i1].getToWhereCanMove().contains(chessComponents[whiteKingX][whiteKingY])) {
+                        CheckKingCanAlive();
+                        if (whiteLose) {
+                            new LoseDialog(ChessColor.BLACK);
+                        } else {
+                            new KingAttackedDialog(ChessColor.BLACK);
+                            return true;
+                        }
+
+                    }
+                }
+
                 if (gameMode == GameMode.PVP) {
                     if (chessComponents[i][i1].getChessColor() == ChessColor.WHITE) {
                         if (chessComponents[i][i1].getToWhereCanMove().contains(chessComponents[BlackKingX][BlackKingY])) {
-                            if (chessComponents[BlackKingX][BlackKingY].getToWhereCanMove().size() == 0) {
+                            CheckKingCanAlive();
+                            if (blackLose) {
                                 new LoseDialog(ChessColor.WHITE);
-                                break a;
+                            } else {
+                                new KingAttackedDialog(ChessColor.WHITE);
+                                return true;
                             }
-                            new KingAttackedDialog(ChessColor.WHITE);
-                            break a;
                         }
                     }
                 }
-                if (chessComponents[i][i1].getChessColor() == ChessColor.BLACK) {
-                    if (chessComponents[i][i1].getToWhereCanMove().contains(chessComponents[whiteKingX][whiteKingY])) {
-                        new KingAttackedDialog(ChessColor.BLACK);
-                        break a;
-                    }
-                }
+
             }
         }
+        return false;
     }
+
+
 
     public void checkKingExist() {
         int blackKingCounter = 0;
@@ -564,6 +632,7 @@ public class Chessboard extends JComponent {
             new LoseDialog(ChessColor.WHITE);
         }
     }
+
 
     public void repent() {
         if (!canRepent()) return;
@@ -598,55 +667,62 @@ public class Chessboard extends JComponent {
         return !archive.isEmpty();
     }
 
-    public void checkWhetherKingCanEscape() {
-        scanTheChessboard();
 
-        ArrayList<ChessComponent> allWhereBlackCanMove = new ArrayList<>();
-        ArrayList<ChessComponent> allWhereWhiteCanMove = new ArrayList<>();
+    public List<String> captureChessboardPicture() {
+        List<String> chessboardGraph = new ArrayList<>();
+        for (int i = 0; i < 8; i++) {
+            String aLine = new String();
+            for (int j = 0; j < 8; j++) {
+                if (chessComponents[i][j] instanceof EmptySlotComponent) {
+                    aLine = aLine + "_";
+                }
+                if (chessComponents[i][j] instanceof RookChessComponent && chessComponents[i][j].getChessColor() == ChessColor.WHITE) {
+                    aLine = aLine + "r";
+                }
+                if (chessComponents[i][j] instanceof BishopChessComponent && chessComponents[i][j].getChessColor() == ChessColor.WHITE) {
+                    aLine = aLine + "b";
+                }
+                if (chessComponents[i][j] instanceof KingChessComponent && chessComponents[i][j].getChessColor() == ChessColor.WHITE) {
+                    aLine = aLine + "k";
+                }
+                if (chessComponents[i][j] instanceof KnightChessComponent && chessComponents[i][j].getChessColor() == ChessColor.WHITE) {
+                    aLine = aLine + "n";
+                }
+                if (chessComponents[i][j] instanceof QueenChessComponent && chessComponents[i][j].getChessColor() == ChessColor.WHITE) {
+                    aLine = aLine + "q";
+                }
+                if (chessComponents[i][j] instanceof PawnChessComponent && chessComponents[i][j].getChessColor() == ChessColor.WHITE) {
+                    aLine = aLine + "p";
+                }
 
-        for (ChessComponent c : blackChessArray) {
-            for (ChessComponent c2 : c.getToWhereCanMove()) {
-                if (!allWhereBlackCanMove.contains(c2)) {
-                    allWhereBlackCanMove.add(c2);
+                if (chessComponents[i][j] instanceof PawnChessComponent && chessComponents[i][j].getChessColor() == ChessColor.BLACK) {
+                    aLine = aLine + "P";
+                }
+                if (chessComponents[i][j] instanceof RookChessComponent && chessComponents[i][j].getChessColor() == ChessColor.BLACK) {
+                    aLine = aLine + "R";
+                }
+                if (chessComponents[i][j] instanceof BishopChessComponent && chessComponents[i][j].getChessColor() == ChessColor.BLACK) {
+                    aLine = aLine + "B";
+                }
+                if (chessComponents[i][j] instanceof KingChessComponent && chessComponents[i][j].getChessColor() == ChessColor.BLACK) {
+                    aLine = aLine + "K";
+                }
+                if (chessComponents[i][j] instanceof KnightChessComponent && chessComponents[i][j].getChessColor() == ChessColor.BLACK) {
+                    aLine = aLine + "N";
+                }
+                if (chessComponents[i][j] instanceof QueenChessComponent && chessComponents[i][j].getChessColor() == ChessColor.BLACK) {
+                    aLine = aLine + "Q";
                 }
             }
+            chessboardGraph.add(aLine);
+        }
+        if (currentColor == ChessColor.WHITE) {
+            chessboardGraph.add("w");
+        } else {
+            chessboardGraph.add("b");
         }
 
-        for (ChessComponent c : whiteChessArray) {
-            for (ChessComponent c2 : c.getToWhereCanMove()) {
-                if (!allWhereWhiteCanMove.contains(c2)) {
-                    allWhereWhiteCanMove.add(c2);
-                }
-            }
-        }
-
-        ArrayList<ChessComponent> whereWhiteKingCanEscape = (ArrayList<ChessComponent>) chessComponents[whiteKingX][whiteKingY].getToWhereCanMove().clone();
-        ArrayList<ChessComponent> whereBlackKingCanEscape = (ArrayList<ChessComponent>) chessComponents[BlackKingX][BlackKingY].getToWhereCanMove().clone();
-
-        whereWhiteKingCanEscape.addAll(chessComponents[whiteKingX][whiteKingY].getToWhereCanMove());
-
-        whereBlackKingCanEscape.addAll(chessComponents[BlackKingX][BlackKingY].getToWhereCanMove());
-
-        for (ChessComponent bMove : chessComponents[BlackKingX][BlackKingY].getToWhereCanMove()) {
-            if (allWhereWhiteCanMove.contains(bMove)) {
-                whereBlackKingCanEscape.remove(bMove);
-            }
-        }
-
-        for (ChessComponent wMove : chessComponents[whiteKingX][whiteKingY].getToWhereCanMove()) {
-            if (allWhereBlackCanMove.contains(wMove)) {
-                whereWhiteKingCanEscape.remove(wMove);
-            }
-        }
-
-        if (whereBlackKingCanEscape.size() == 0 && allWhereWhiteCanMove.contains(chessComponents[BlackKingX][BlackKingY])) {
-            new LoseDialog(ChessColor.WHITE);
-        }
-
-        if (whereWhiteKingCanEscape.size() == 0 && allWhereBlackCanMove.contains(chessComponents[whiteKingX][whiteKingY])) {
-            new LoseDialog(ChessColor.BLACK);
-        }
-
+        return chessboardGraph;
     }
 
     public void updateRoundLabel() {
@@ -656,4 +732,143 @@ public class Chessboard extends JComponent {
     public int getRound() {
         return (int) Math.ceil((float) currentStep / 2);
     }
+
+    public void CheckKingCanAlive() {
+        ConcreteChessGame concreteChessGame = new ConcreteChessGame();
+        concreteChessGame.loadChessGame(captureChessboardPicture());
+
+        for (ChessComponent bChess : blackChessArray) {
+            for (ChessComponent bChessCanMove : bChess.getToWhereCanMove()) {
+
+                int sourceX = bChess.getChessboardPoint().getX();
+                int sourceY = bChess.getChessboardPoint().getY();
+
+                int targetX = bChessCanMove.getChessboardPoint().getX();
+                int targetY = bChessCanMove.getChessboardPoint().getY();
+
+                concreteChessGame.moveChess(sourceX, sourceY, targetX, targetY);
+
+                ChessComponent[][] chessComponentsAfter = loadChessboard(concreteChessGame.getChessboardGraph());
+
+                scanTheChessboardAndJudgeKingAttacked(chessComponentsAfter);
+
+                if (blackLose) {
+                    break;
+                }
+
+            }
+        }
+
+
+            for (ChessComponent wChess : whiteChessArray) {
+                for (ChessComponent wChessCanMove : wChess.getToWhereCanMove()) {
+
+                    int sourceX = wChess.getChessboardPoint().getX();
+                    int sourceY = wChess.getChessboardPoint().getY();
+
+                    int targetX = wChessCanMove.getChessboardPoint().getX();
+                    int targetY = wChessCanMove.getChessboardPoint().getY();
+
+                    concreteChessGame.moveChess(sourceX, sourceY, targetX, targetY);
+
+                    ChessComponent[][] chessComponentsAfter = loadChessboard(concreteChessGame.getChessboardGraph());
+
+                    scanTheChessboardAndJudgeKingAttacked(chessComponentsAfter);
+
+                    if (whiteLose) {
+                        break;
+                    }
+
+                }
+            }
+
+
+
+
+
+    }
+
+    public ChessComponent[][] loadChessboard(List<String> str) {
+        ChessComponent[][] chessComponents = new ChessComponent[8][8];
+
+        for (int i = 0; i < 8; i++) {
+            for (int i1 = 0; i1 < 8; i1++) {
+                if (str.get(i).charAt(i1) == 'R') {
+                    chessComponents[i][i1] = new RookChessComponent();
+                    chessComponents[i][i1].setChessColor(ChessColor.BLACK);
+                    chessComponents[i][i1].setChessboardPoint(new ChessboardPoint(i, i1));
+                }
+                if (str.get(i).charAt(i1) == 'Q') {
+                    chessComponents[i][i1] = new QueenChessComponent();
+                    chessComponents[i][i1].setChessColor(ChessColor.BLACK);
+                    chessComponents[i][i1].setChessboardPoint(new ChessboardPoint(i, i1));
+                }
+
+                if (str.get(i).charAt(i1) == 'B') {
+                    chessComponents[i][i1] = new BishopChessComponent();
+                    chessComponents[i][i1].setChessColor(ChessColor.BLACK);
+                    chessComponents[i][i1].setChessboardPoint(new ChessboardPoint(i, i1));
+                }
+
+                if (str.get(i).charAt(i1) == 'K') {
+                    chessComponents[i][i1] = new KingChessComponent();
+                    chessComponents[i][i1].setChessColor(ChessColor.BLACK);
+                    chessComponents[i][i1].setChessboardPoint(new ChessboardPoint(i, i1));
+                }
+
+                if (str.get(i).charAt(i1) == 'N') {
+                    chessComponents[i][i1] = new KnightChessComponent();
+                    chessComponents[i][i1].setChessColor(ChessColor.BLACK);
+                    chessComponents[i][i1].setChessboardPoint(new ChessboardPoint(i, i1));
+                }
+                if (str.get(i).charAt(i1) == 'P') {
+                    chessComponents[i][i1] = new PawnChessComponent();
+                    chessComponents[i][i1].setChessColor(ChessColor.BLACK);
+                    chessComponents[i][i1].setChessboardPoint(new ChessboardPoint(i, i1));
+                }
+
+                if (str.get(i).charAt(i1) == 'q') {
+                    chessComponents[i][i1] = new QueenChessComponent();
+                    chessComponents[i][i1].setChessColor(ChessColor.WHITE);
+                    chessComponents[i][i1].setChessboardPoint(new ChessboardPoint(i, i1));
+                }
+
+                if (str.get(i).charAt(i1) == 'p') {
+                    chessComponents[i][i1] = new PawnChessComponent();
+                    chessComponents[i][i1].setChessColor(ChessColor.WHITE);
+                    chessComponents[i][i1].setChessboardPoint(new ChessboardPoint(i, i1));
+                }
+
+                if (str.get(i).charAt(i1) == 'r') {
+                    chessComponents[i][i1] = new RookChessComponent();
+                    chessComponents[i][i1].setChessColor(ChessColor.WHITE);
+                    chessComponents[i][i1].setChessboardPoint(new ChessboardPoint(i, i1));
+                }
+                if (str.get(i).charAt(i1) == 'b') {
+                    chessComponents[i][i1] = new BishopChessComponent();
+                    chessComponents[i][i1].setChessColor(ChessColor.WHITE);
+                    chessComponents[i][i1].setChessboardPoint(new ChessboardPoint(i, i1));
+                }
+                if (str.get(i).charAt(i1) == 'k') {
+                    chessComponents[i][i1] = new KingChessComponent();
+                    chessComponents[i][i1].setChessColor(ChessColor.WHITE);
+                    chessComponents[i][i1].setChessboardPoint(new ChessboardPoint(i, i1));
+                }
+                if (str.get(i).charAt(i1) == 'n') {
+                    chessComponents[i][i1] = new KnightChessComponent();
+                    chessComponents[i][i1].setChessColor(ChessColor.WHITE);
+                    chessComponents[i][i1].setChessboardPoint(new ChessboardPoint(i, i1));
+                }
+
+                if (str.get(i).charAt(i1) == '_') {
+                    chessComponents[i][i1] = new EmptySlotComponent();
+                    chessComponents[i][i1].setChessColor(ChessColor.NONE);
+                    chessComponents[i][i1].setChessboardPoint(new ChessboardPoint(i, i1));
+                }
+
+            }
+        }
+        return chessComponents;
+    }
 }
+

@@ -12,9 +12,13 @@ public class PawnChessComponent extends ChessComponent {
     private static Image PAWN_WHITE;
     private static Image PAWN_BLACK;
 
-    private final ChessColor thisChessColor;//record the color of chess;
+    private  ChessColor thisChessColor;//record the color of chess;
     private boolean isTheFirstMove;//是否是第一步
     private boolean canBeEnAsPassant;//能否被别人当作过路兵吃掉
+
+    public PawnChessComponent() {
+
+    }
 
     public boolean isCanBeEnAsPassant() {
         return canBeEnAsPassant;
