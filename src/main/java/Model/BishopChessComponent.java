@@ -10,6 +10,10 @@ public class BishopChessComponent extends ChessComponent {
     private static Image BISHOP_WHITE;
     private static Image BISHOP_BLACK;
 
+    public BishopChessComponent() {
+
+    }
+
     public void loadResource() throws IOException {
         if (BISHOP_WHITE == null) {
             BISHOP_WHITE = getImage("images/bishop-white.png");

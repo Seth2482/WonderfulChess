@@ -20,6 +20,10 @@ public class RookChessComponent extends ChessComponent {
     private boolean canBeChangeKing = true;
     private boolean hasMoved = false;
 
+    public RookChessComponent() {
+
+    }
+
     /**
      * 读取加载车棋子的图片
      *

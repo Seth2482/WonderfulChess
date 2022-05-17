@@ -12,6 +12,10 @@ public class KingChessComponent extends ChessComponent {
     private boolean canBeChangeRook = true;
     private boolean hasMoved = false;
 
+    public KingChessComponent() {
+
+    }
+
 
     public void loadResource() throws IOException {
         if (KING_WHITE == null) {

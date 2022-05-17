@@ -42,7 +42,7 @@ public abstract class ChessComponent extends JComponent {
      * selected: 表示这个棋子是否被选中
      */
     private ChessboardPoint chessboardPoint;
-    protected final ChessColor chessColor;
+    protected  ChessColor chessColor;
     private boolean selected;
     private boolean canBeMoveTo;
     private ArrayList<ChessComponent> toWhereCanMove = new ArrayList<>();
@@ -61,6 +61,14 @@ public abstract class ChessComponent extends JComponent {
 
     public boolean isCanBeMoveTo() {
         return canBeMoveTo;
+    }
+
+    public void setChessColor(ChessColor chessColor) {
+        this.chessColor = chessColor;
+    }
+
+    public ChessComponent() {
+
     }
 
     protected ChessComponent(ChessboardPoint chessboardPoint, Point location, ChessColor chessColor, ClickController clickController, int size) {

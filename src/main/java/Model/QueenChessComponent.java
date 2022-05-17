@@ -10,6 +10,10 @@ public class QueenChessComponent extends ChessComponent {
     private static Image QUEEN_WHITE;
     private static Image QUEEN_BLACK;
 
+    public QueenChessComponent() {
+
+    }
+
     public void loadResource() throws IOException {
         if (QUEEN_WHITE == null) {
             QUEEN_WHITE = getImage("images/queen-white.png");
