@@ -72,4 +72,11 @@
         </dependency>
 
     </dependencies>
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>GitHub Packages</name>
+            <url>https://github.com/Seth2482/WonderfulChess</url>
+        </repository>
+    </distributionManagement>
 </project>
