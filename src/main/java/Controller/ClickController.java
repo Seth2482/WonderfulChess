@@ -81,13 +81,11 @@ public class ClickController {
                 }
                 if (chessboard.getGameMode() != GameMode.PVP) {
                     //TODO:: 底线升变时要延迟执行 以及游戏结束后就不要再行棋了
-                    ChessGameFrame.getInstance().setSaveButtonEnabled(false);
-                    ChessGameFrame.getInstance().setRestartButton(false);
+                    ChessGameFrame.getInstance().setActionButtonsEnabled(false);
                     Timer timer = new Timer(2000, e -> {
 
                         chessboard.AIMove();
-                        ChessGameFrame.getInstance().setSaveButtonEnabled(true);
-                        ChessGameFrame.getInstance().setRestartButton(true);
+                        ChessGameFrame.getInstance().setActionButtonsEnabled(true);
                     });
                     timer.setRepeats(false);
                     timer.start();

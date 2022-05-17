@@ -33,7 +33,11 @@ public class Archive {
         this.steps.add(
                 new Step(chessboard, chess1, chess2, true)
         );
-        currentColor = chess1.getChessColor().equals(ChessColor.WHITE) ? ChessColor.BLACK : ChessColor.WHITE;
+        swapColor();
+    }
+
+    private void swapColor(){
+        currentColor = currentColor.equals(ChessColor.WHITE) ? ChessColor.BLACK : ChessColor.WHITE;
     }
 
     @Override
@@ -56,11 +60,12 @@ public class Archive {
 
     }
 
-    public ChessComponent[][] withdraw() {
-        if (this.steps.size() > 1) {
+    public void withdraw() {
+        if (this.steps.size() > 0) {
             steps.remove(steps.size() - 1);
         }
-        return getChessComponents();
+
+        swapColor();
     }
 
     public void initialize() {
@@ -197,6 +202,10 @@ public class Archive {
 
         }
 
+    }
+
+    public int getStepCount(){
+        return steps.size();
     }
 
     public GameMode getGameMode() {

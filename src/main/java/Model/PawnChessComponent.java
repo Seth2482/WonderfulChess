@@ -90,11 +90,11 @@ public class PawnChessComponent extends ChessComponent {
             return false;
         } else {
             if (!(chessComponents[destination.getX()][destination.getY()] instanceof EmptySlotComponent) && (destination.getX() == source.getX() - factor) && (destination.getY() == source.getY() + 1)) {
-                System.out.println("eat chess as cross");
+//                System.out.println("eat chess as cross");
                 return true;
             }
             if (!(chessComponents[destination.getX()][destination.getY()] instanceof EmptySlotComponent) && (destination.getX() == source.getX() - factor) && (destination.getY() == source.getY() - 1)) {
-                System.out.println("eat chess as cross");
+//                System.out.println("eat chess as cross");
                 return true;
             }//斜着吃子
             if (source.getY() != chessComponents.length - 1) {
