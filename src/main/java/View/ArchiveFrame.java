@@ -3,7 +3,7 @@ package View;
 import Archive.Archive;
 import Archive.Exception.*;
 import Model.GameMode;
-import View.panels.GradientPanel;
+import View.Panel.GradientPanel;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSyntaxException;
 import com.intellij.uiDesigner.core.GridConstraints;

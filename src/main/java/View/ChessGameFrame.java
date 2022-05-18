@@ -2,6 +2,7 @@ package View;
 
 import Controller.GameController;
 import Archive.Archive;
+import Model.ChessColor;
 import Model.GameMode;
 import Sound.SoundPlayer;
 import View.Dialog.ChoosePathDialog;
@@ -155,7 +156,7 @@ public class ChessGameFrame extends JFrame {
     private void addRoundLabel() {
         roundLabel = new JLabel("Round #1");
         roundLabel.setLocation(70, 10);
-        roundLabel.setSize(100, 60);
+        roundLabel.setSize(200, 60);
         roundLabel.setFont(new Font("Rockwell", Font.BOLD, 20));
         add(roundLabel);
     }
@@ -217,6 +218,14 @@ public class ChessGameFrame extends JFrame {
 
     public static GameMode getGameMode() {
         return gameMode;
+    }
+
+    public void gameOver(ChessColor chessColor){
+        dispose();
+        SwingUtilities.invokeLater(()->{
+            GameOverFrame gameOverFrame = new GameOverFrame(chessColor, gameMode);
+            gameOverFrame.setVisible(true);
+        });
     }
 
 }

@@ -8,7 +8,6 @@ import Model.KnightChessComponent;
 import Model.PawnChessComponent;
 import Model.QueenChessComponent;
 import Archive.Archive;
-import View.Dialog.LoseDialog;
 import VisualChessboard.*;
 
 import javax.swing.*;
@@ -196,7 +195,7 @@ public class Chessboard extends JComponent {
 
     public void swapColor() {
         currentColor = currentColor == ChessColor.BLACK ? ChessColor.WHITE : ChessColor.BLACK;
-        checkKingAttacked(chessComponents, getGameMode());
+        checkKingAttacked();
         checkKingExist();
         statusLabel.setText("Current Color: " + currentColor.getName());
         updateRoundLabel();
@@ -589,7 +588,8 @@ public class Chessboard extends JComponent {
     }
 
 
-    public boolean checkKingAttacked(ChessComponent[][] chessComponents, GameMode gameMode) {
+    public boolean checkKingAttacked() {
+        GameMode gameMode = getGameMode();
         scanTheChessboard();
         for (int i = 0; i < 8; i++) {
             for (int i1 = 0; i1 < 8; i1++) {
@@ -598,7 +598,7 @@ public class Chessboard extends JComponent {
                     if (chessComponents[i][i1].getToWhereCanMove().contains(chessComponents[whiteKingX][whiteKingY])) {
                         CheckKingCanAlive();
                         if (whiteLose) {
-                            new LoseDialog(ChessColor.BLACK);
+                            ChessGameFrame.getInstance().gameOver(ChessColor.BLACK);
                         } else {
                             blackKingAlertLabel.setVisible(true);
                             return true;
@@ -612,7 +612,7 @@ public class Chessboard extends JComponent {
                         if (chessComponents[i][i1].getToWhereCanMove().contains(chessComponents[BlackKingX][BlackKingY])) {
                             CheckKingCanAlive();
                             if (blackLose) {
-                                new LoseDialog(ChessColor.WHITE);
+                                ChessGameFrame.getInstance().gameOver(ChessColor.WHITE);
                             } else {
                                 blackKingAlertLabel.setVisible(true);
                                 return true;
@@ -630,7 +630,7 @@ public class Chessboard extends JComponent {
     }
 
 
-    public void checkKingExist() {
+    public boolean checkKingExist() {
         int blackKingCounter = 0;
         int whiteKingCounter = 0;
 
@@ -645,11 +645,15 @@ public class Chessboard extends JComponent {
             }
         }
         if (whiteKingCounter == 0) {
-            new LoseDialog(ChessColor.BLACK);
+            ChessGameFrame.getInstance().gameOver(ChessColor.BLACK);
+            return false;
         }
         if (blackKingCounter == 0) {
-            new LoseDialog(ChessColor.WHITE);
+            ChessGameFrame.getInstance().gameOver(ChessColor.WHITE);
+            return false;
         }
+
+        return true;
     }
 
 

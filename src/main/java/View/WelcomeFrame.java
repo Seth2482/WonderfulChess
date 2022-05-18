@@ -1,7 +1,7 @@
 package View;
 
 import Model.GameMode;
-import View.panels.GradientPanel;
+import View.Panel.GradientPanel;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
@@ -33,25 +33,19 @@ public class WelcomeFrame extends JFrame {
         gameMode1.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                dispose();
-                SwingUtilities.invokeLater(() -> {
-                    dispose();
-                    ChessGameFrame mainFrame = new ChessGameFrame(1000, 760, GameMode.PVP);
-                    mainFrame.setVisible(true);
-
-                });
+                newGame(GameMode.PVP);
             }
         });
         gameMode2.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                playWithRobot(GameMode.PVEEasy);
+                newGame(GameMode.PVEEasy);
             }
         });
         gameMode3.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                playWithRobot(GameMode.PVEHard);
+                newGame(GameMode.PVEHard);
             }
         });
         loadArchive.addActionListener(new ActionListener() {
@@ -66,7 +60,7 @@ public class WelcomeFrame extends JFrame {
         });
     }
 
-    public void playWithRobot(GameMode gameMode) {
+    public void newGame(GameMode gameMode) {
         SwingUtilities.invokeLater(() -> {
             dispose();
             ChessGameFrame mainFrame = new ChessGameFrame(1000, 760, gameMode);
@@ -75,7 +69,7 @@ public class WelcomeFrame extends JFrame {
     }
 
     private void createUIComponents() {
-        titlePanel = new GradientPanel("#F1F2B5", "#135058");
+        titlePanel = new GradientPanel("#4CB8C4", "#3CD3AD");
     }
 
     /**
