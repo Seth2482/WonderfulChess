@@ -165,6 +165,7 @@ public class PawnChessComponent extends ChessComponent {
 
 class SideLineTransitionDialog extends JDialog {
     SideLineTransitionDialog(PawnChessComponent pawn) {
+        Chessboard.getInstance().getChessCountdown().stopCount();
         setLayout(null);
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         setAlwaysOnTop(true); // 置顶
@@ -183,6 +184,8 @@ class SideLineTransitionDialog extends JDialog {
         buttonQueen.setSize(80, 30);
         buttonQueen.addActionListener((e) -> {
             Chessboard.getInstance().pawnTranslateToQueen(pawn);
+            Chessboard.getInstance().getChessCountdown().startCount();
+
             this.dispose();
         });
         add(buttonQueen);
@@ -193,6 +196,8 @@ class SideLineTransitionDialog extends JDialog {
         buttonRook.setSize(80, 30);
         buttonRook.addActionListener((e) -> {
             Chessboard.getInstance().pawnTranslateToRook(pawn);
+            Chessboard.getInstance().getChessCountdown().startCount();
+
             this.dispose();
         });
         add(buttonRook);
@@ -203,6 +208,8 @@ class SideLineTransitionDialog extends JDialog {
         buttonKnight.setSize(80, 30);
         buttonKnight.addActionListener((e) -> {
             Chessboard.getInstance().pawnTranslateToKnight(pawn);
+            Chessboard.getInstance().getChessCountdown().startCount();
+
             this.dispose();
         });
         add(buttonKnight);
@@ -213,6 +220,8 @@ class SideLineTransitionDialog extends JDialog {
         buttonBishop.setSize(80, 30);
         buttonBishop.addActionListener((e) -> {
             Chessboard.getInstance().pawnTranslateToBishop(pawn);
+            Chessboard.getInstance().getChessCountdown().startCount();
+
             this.dispose();
         });
         add(buttonBishop);

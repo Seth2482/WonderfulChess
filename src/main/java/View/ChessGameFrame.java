@@ -7,6 +7,7 @@ import Model.GameMode;
 import Sound.SoundPlayer;
 import View.Dialog.ChoosePathDialog;
 import View.Dialog.RestartDialog;
+import Timer.ChessCountdown;
 
 import javax.swing.*;
 import java.awt.*;
@@ -31,6 +32,8 @@ public class ChessGameFrame extends JFrame {
     private JLabel roundLabel = new JLabel("Round #1");
     private JLabel whiteKingAlertLabel = new JLabel("White king is being attacked!");
     private JLabel blackKingAlertLabel = new JLabel("Black king is being attacked!");
+    private JLabel countdownLabel = new JLabel("00:20");
+    private ChessCountdown chessCountdown;
 
 
     public ChessGameFrame(int width, int height, GameMode gameMode) {
@@ -47,6 +50,7 @@ public class ChessGameFrame extends JFrame {
         addStatusLabel();
         addRoundLabel();
         addKingAlertLabels();
+        addCountdownLabel();
         if (archive != null) {
             addChessboard(archive);
         } else {
@@ -56,6 +60,7 @@ public class ChessGameFrame extends JFrame {
         if (gameMode == GameMode.PVP) {
             addRepentButton();
         }
+        chessCountdown.startCount();
     }
 
     private void basicInitialize(int width, int height) {
@@ -89,6 +94,8 @@ public class ChessGameFrame extends JFrame {
         chessboard.setRoundLabel(this.roundLabel);
         chessboard.setWhiteKingAlertLabel(whiteKingAlertLabel);
         chessboard.setBlackKingAlertLabel(blackKingAlertLabel);
+        chessboard.setCountdownLabel(countdownLabel);
+        chessboard.setChessCountdown(chessCountdown);
         gameController = new GameController(chessboard);
         chessboard.setLocation(HEIGHT / 10, HEIGHT / 10);
         add(chessboard);
@@ -162,11 +169,11 @@ public class ChessGameFrame extends JFrame {
     }
 
     private void addKingAlertLabels() {
-        int i =0;
+        int i = 0;
         for (JLabel label : new JLabel[]{whiteKingAlertLabel, blackKingAlertLabel}) {
-            if (i ==0){
-                label.setLocation(300, (int) (HEIGHT*0.88));
-            }else {
+            if (i == 0) {
+                label.setLocation(300, (int) (HEIGHT * 0.88));
+            } else {
                 label.setLocation(300, 10);
             }
             label.setSize(300, 60);
@@ -178,6 +185,15 @@ public class ChessGameFrame extends JFrame {
         }
     }
 
+    private void addCountdownLabel() {
+        countdownLabel = new JLabel("00:20");
+        countdownLabel.setLocation(HEIGHT - 30, 10);
+        countdownLabel.setSize(200, 60);
+        countdownLabel.setForeground(Color.decode("#F44336"));
+        countdownLabel.setFont(new Font("Rockwell", Font.BOLD, 20));
+        add(countdownLabel);
+        chessCountdown = new ChessCountdown(countdownLabel);
+    }
 
     public void setActionButtonsEnabled(boolean enabled) {
         restartButton.setEnabled(enabled);
@@ -220,9 +236,9 @@ public class ChessGameFrame extends JFrame {
         return gameMode;
     }
 
-    public void gameOver(ChessColor chessColor){
+    public void gameOver(ChessColor chessColor) {
         dispose();
-        SwingUtilities.invokeLater(()->{
+        SwingUtilities.invokeLater(() -> {
             GameOverFrame gameOverFrame = new GameOverFrame(chessColor, gameMode);
             gameOverFrame.setVisible(true);
         });

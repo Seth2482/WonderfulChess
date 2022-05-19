@@ -16,6 +16,8 @@ import java.util.*;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import Timer.ChessCountdown;
+
 /**
  * 这个类表示面板上的棋盘组件对象
  */
@@ -44,6 +46,7 @@ public class Chessboard extends JComponent {
     protected Archive archive;
     private JLabel statusLabel = new JLabel();
     private JLabel roundLabel = new JLabel();
+    private JLabel countdownLabel = new JLabel();
     private JLabel whiteKingAlertLabel = new JLabel();
     private JLabel blackKingAlertLabel = new JLabel();
     private ArrayList<ChessComponent> blackChessArray = new ArrayList<>();
@@ -57,6 +60,7 @@ public class Chessboard extends JComponent {
     private boolean whiteLose = false;
     private boolean blackLose = false;
     private boolean inTest = false;
+    private ChessCountdown chessCountdown = new ChessCountdown(countdownLabel);
 
     public GameMode getGameMode() {
         return ChessGameFrame.getGameMode();
@@ -84,6 +88,18 @@ public class Chessboard extends JComponent {
 
     public void setBlackKingAlertLabel(JLabel blackKingAlertLabel) {
         this.blackKingAlertLabel = blackKingAlertLabel;
+    }
+
+    public void setCountdownLabel(JLabel countdownLabel) {
+        this.countdownLabel = countdownLabel;
+    }
+
+    public void setChessCountdown(ChessCountdown chessCountdown) {
+        this.chessCountdown = chessCountdown;
+    }
+
+    public ChessCountdown getChessCountdown(){
+        return chessCountdown;
     }
 
     public Chessboard(int width, int height, Archive archive) {
@@ -200,6 +216,7 @@ public class Chessboard extends JComponent {
         statusLabel.setText("Current Color: " + currentColor.getName());
         updateRoundLabel();
         statusLabel.repaint();
+        chessCountdown.startCount();
     }
 
     private void initRookOnBoard(int row, int col, ChessColor color) {
