@@ -98,7 +98,7 @@ public class Chessboard extends JComponent {
         this.chessCountdown = chessCountdown;
     }
 
-    public ChessCountdown getChessCountdown(){
+    public ChessCountdown getChessCountdown() {
         return chessCountdown;
     }
 
@@ -196,7 +196,7 @@ public class Chessboard extends JComponent {
 
         checkAndInvoke();
         archive.stepTrigger(this, chess1, chess2);
-
+        scanTheChessboard();
         // 步数计步器
         currentStep++;
     }
@@ -395,26 +395,38 @@ public class Chessboard extends JComponent {
     }
 
     public void pawnTranslateToQueen(PawnChessComponent pawn) {
-        remove(pawn);
         ChessComponent chessComponent = new QueenChessComponent(pawn.getChessboardPoint(), pawn.getLocation(), pawn.getChessColor(), clickController, CHESS_SIZE);
-        putChessOnBoard(chessComponent);
+        int x = pawn.getChessboardPoint().getX() ;
+        int y = pawn.getChessboardPoint().getY();
+       ChessComponent chessComponent2=new EmptySlotComponent(new ChessboardPoint(x, y), calculatePoint(x, y), clickController, CHESS_SIZE);
+       swapChessComponents(chessComponent2,pawn);
+       putChessOnBoard(chessComponent);
     }
 
     public void pawnTranslateToRook(PawnChessComponent pawn) {
-        remove(pawn);
         ChessComponent chessComponent = new RookChessComponent(pawn.getChessboardPoint(), pawn.getLocation(), pawn.getChessColor(), clickController, CHESS_SIZE);
+        int x = pawn.getChessboardPoint().getX() ;
+        int y = pawn.getChessboardPoint().getY();
+        ChessComponent chessComponent2=new EmptySlotComponent(new ChessboardPoint(x, y), calculatePoint(x, y), clickController, CHESS_SIZE);
+        swapChessComponents(chessComponent2,pawn);
         putChessOnBoard(chessComponent);
     }
 
     public void pawnTranslateToBishop(PawnChessComponent pawn) {
-        remove(pawn);
         ChessComponent chessComponent = new BishopChessComponent(pawn.getChessboardPoint(), pawn.getLocation(), pawn.getChessColor(), clickController, CHESS_SIZE);
+        int x = pawn.getChessboardPoint().getX() ;
+        int y = pawn.getChessboardPoint().getY();
+        ChessComponent chessComponent2=new EmptySlotComponent(new ChessboardPoint(x, y), calculatePoint(x, y), clickController, CHESS_SIZE);
+        swapChessComponents(chessComponent2,pawn);
         putChessOnBoard(chessComponent);
     }
 
     public void pawnTranslateToKnight(PawnChessComponent pawn) {
-        remove(pawn);
         ChessComponent chessComponent = new KnightChessComponent(pawn.getChessboardPoint(), pawn.getLocation(), pawn.getChessColor(), clickController, CHESS_SIZE);
+        int x = pawn.getChessboardPoint().getX() ;
+        int y = pawn.getChessboardPoint().getY();
+        ChessComponent chessComponent2=new EmptySlotComponent(new ChessboardPoint(x, y), calculatePoint(x, y), clickController, CHESS_SIZE);
+        swapChessComponents(chessComponent2,pawn);
         putChessOnBoard(chessComponent);
     }
 
