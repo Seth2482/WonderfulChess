@@ -28,6 +28,8 @@ public class ClickController {
                 chessComponent.setSelected(true);
                 first = chessComponent;
                 ChessGameFrame.getRestartButton().setEnabled(false);
+                ChessGameFrame.getInstance().setRepentButtonEnabled(false);
+
                 for (int i = 0; i < 8; i++) {//遍历哪一个can move to
                     for (int j = 0; j < 8; j++) {
                         if ((first.canMoveTo(chessboard.getChessComponents(), new ChessboardPoint(i, j)))
@@ -47,6 +49,7 @@ public class ClickController {
                 first = null;
                 recordFirst.repaint();
                 ChessGameFrame.getRestartButton().setEnabled(true);
+                ChessGameFrame.getInstance().setRepentButtonEnabled(true);
 
                 for (int i = 0; i < 8; i++) {//遍历哪一个can move to
                     for (int j = 0; j < 8; j++) {
@@ -66,7 +69,7 @@ public class ClickController {
                 first.setSelected(false);
                 first = null;
                 ChessGameFrame.getRestartButton().setEnabled(true);
-
+                ChessGameFrame.getInstance().setRepentButtonEnabled(true);
                 for (int i = 0; i < 8; i++) {//遍历哪一个can move to
                     for (int j = 0; j < 8; j++) {
                         if (chessboard.getChessComponents()[i][j].isCanBeMoveTo()) {

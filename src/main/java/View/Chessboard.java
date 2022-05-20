@@ -398,24 +398,28 @@ public class Chessboard extends JComponent {
         remove(pawn);
         ChessComponent chessComponent = new QueenChessComponent(pawn.getChessboardPoint(), pawn.getLocation(), pawn.getChessColor(), clickController, CHESS_SIZE);
         putChessOnBoard(chessComponent);
+        scanTheChessboard();
     }
 
     public void pawnTranslateToRook(PawnChessComponent pawn) {
         remove(pawn);
         ChessComponent chessComponent = new RookChessComponent(pawn.getChessboardPoint(), pawn.getLocation(), pawn.getChessColor(), clickController, CHESS_SIZE);
         putChessOnBoard(chessComponent);
+        scanTheChessboard();
     }
 
     public void pawnTranslateToBishop(PawnChessComponent pawn) {
         remove(pawn);
         ChessComponent chessComponent = new BishopChessComponent(pawn.getChessboardPoint(), pawn.getLocation(), pawn.getChessColor(), clickController, CHESS_SIZE);
         putChessOnBoard(chessComponent);
+        scanTheChessboard();
     }
 
     public void pawnTranslateToKnight(PawnChessComponent pawn) {
         remove(pawn);
         ChessComponent chessComponent = new KnightChessComponent(pawn.getChessboardPoint(), pawn.getLocation(), pawn.getChessColor(), clickController, CHESS_SIZE);
         putChessOnBoard(chessComponent);
+        scanTheChessboard();
     }
 
     public void scanTheChessboard() {

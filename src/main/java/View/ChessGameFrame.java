@@ -198,6 +198,7 @@ public class ChessGameFrame extends JFrame {
     public void setActionButtonsEnabled(boolean enabled) {
         restartButton.setEnabled(enabled);
         saveButton.setEnabled(enabled);
+        repentButton.setEnabled(enabled);
     }
 
     public void setSaveButtonEnabled(Boolean enabled) {
