@@ -23,11 +23,8 @@ public class GameOverFrame extends JFrame {
     private JLabel winnerLabel;
     private ChessColor winnerChess;
     private GameMode gameMode;
-    private boolean hasCreated = false;
 
     public GameOverFrame(ChessColor winnerChess, GameMode gameMode) {
-        if (hasCreated) return;
-        else hasCreated = true;
 
         this.winnerChess = winnerChess;
         this.gameMode = gameMode;
@@ -44,7 +41,6 @@ public class GameOverFrame extends JFrame {
                 dispose();
                 ChessGameFrame mainFrame = new ChessGameFrame(1000, 760, gameMode);
                 mainFrame.setVisible(true);
-                hasCreated = false;
             }
         });
         mainPageButton.addActionListener(new ActionListener() {
@@ -53,7 +49,6 @@ public class GameOverFrame extends JFrame {
                 SwingUtilities.invokeLater(() -> {
                     WelcomeFrame welcomeFrame = new WelcomeFrame();
                     welcomeFrame.setVisible(true);
-                    hasCreated = false;
                 });
             }
         });

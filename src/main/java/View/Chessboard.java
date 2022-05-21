@@ -192,8 +192,11 @@ public class Chessboard extends JComponent {
         chessComponents[row2][col2] = chess2;
 
         // 检查底线升变
-        if (chess1 instanceof PawnChessComponent)
+        if (chess1 instanceof PawnChessComponent && !inTest && Chessboard.getInstance().checkKingExist()) {
+            // 先看看是不是赢了 赢了就直接弹游戏结束的界面 不要弹底线升变了
             ((PawnChessComponent) chess1).checkIfReachedBottom();
+        }
+
 
         chess1.repaint();
         chess2.repaint();
@@ -302,6 +305,9 @@ public class Chessboard extends JComponent {
                 ChessGameFrame.getInstance().setRepentButtonEnabled(true);
             }, 1);
         }
+
+        whiteKingAlertLabel.setVisible(false);
+        blackKingAlertLabel.setVisible(false);
 
 //        this.scanTheChessboard();
     }

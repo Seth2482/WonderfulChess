@@ -34,6 +34,7 @@ public class ChessGameFrame extends JFrame {
     private JLabel blackKingAlertLabel = new JLabel("Black king is being attacked!");
     private JLabel countdownLabel = new JLabel("00:20");
     private ChessCountdown chessCountdown;
+    private boolean gameOver = false;
 
 
     public ChessGameFrame(int width, int height, GameMode gameMode) {
@@ -238,6 +239,9 @@ public class ChessGameFrame extends JFrame {
     }
 
     public void gameOver(ChessColor chessColor) {
+        if (gameOver) return;
+        else gameOver = true;
+
         dispose();
         SwingUtilities.invokeLater(() -> {
             GameOverFrame gameOverFrame = new GameOverFrame(chessColor, gameMode);

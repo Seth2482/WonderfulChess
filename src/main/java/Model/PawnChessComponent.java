@@ -127,13 +127,6 @@ public class PawnChessComponent extends ChessComponent {
 
         checkCanBeEnAsPassant();
         updateIsTheFirstMove();
-        if (!Chessboard.getInstance().isInTest()){
-            // 先看看是不是赢了 赢了就直接弹游戏结束的界面 不要弹底线升变了
-            Chessboard.getInstance().checkKingAttacked();
-            Chessboard.getInstance().checkKingExist();
-//            把底线升变延后执行
-//            checkIfReachedBottom();
-        }
     }
 
     public void checkCanBeEnAsPassant() {
