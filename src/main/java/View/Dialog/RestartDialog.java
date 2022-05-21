@@ -24,6 +24,7 @@ public class RestartDialog extends JDialog {
         buttonYes.setSize(100, 30);
         buttonYes.addActionListener((e) -> {
             Chessboard.getInstance().initialAllChess();
+            Chessboard.getInstance().getChessCountdown().startCount();
             this.dispose();
         });
         add(buttonYes);

@@ -191,6 +191,10 @@ public class Chessboard extends JComponent {
         int row2 = chess2.getChessboardPoint().getX(), col2 = chess2.getChessboardPoint().getY();
         chessComponents[row2][col2] = chess2;
 
+        // 检查底线升变
+        if (chess1 instanceof PawnChessComponent)
+            ((PawnChessComponent) chess1).checkIfReachedBottom();
+
         chess1.repaint();
         chess2.repaint();
 
@@ -395,38 +399,30 @@ public class Chessboard extends JComponent {
     }
 
     public void pawnTranslateToQueen(PawnChessComponent pawn) {
+        remove(pawn);
         ChessComponent chessComponent = new QueenChessComponent(pawn.getChessboardPoint(), pawn.getLocation(), pawn.getChessColor(), clickController, CHESS_SIZE);
-        int x = pawn.getChessboardPoint().getX() ;
-        int y = pawn.getChessboardPoint().getY();
-       ChessComponent chessComponent2=new EmptySlotComponent(new ChessboardPoint(x, y), calculatePoint(x, y), clickController, CHESS_SIZE);
-       swapChessComponents(chessComponent2,pawn);
-       putChessOnBoard(chessComponent);
+        chessComponent.setVisible(true);
+        putChessOnBoard(chessComponent);
     }
 
     public void pawnTranslateToRook(PawnChessComponent pawn) {
+        remove(pawn);
         ChessComponent chessComponent = new RookChessComponent(pawn.getChessboardPoint(), pawn.getLocation(), pawn.getChessColor(), clickController, CHESS_SIZE);
-        int x = pawn.getChessboardPoint().getX() ;
-        int y = pawn.getChessboardPoint().getY();
-        ChessComponent chessComponent2=new EmptySlotComponent(new ChessboardPoint(x, y), calculatePoint(x, y), clickController, CHESS_SIZE);
-        swapChessComponents(chessComponent2,pawn);
+        chessComponent.setVisible(true);
         putChessOnBoard(chessComponent);
     }
 
     public void pawnTranslateToBishop(PawnChessComponent pawn) {
+        remove(pawn);
         ChessComponent chessComponent = new BishopChessComponent(pawn.getChessboardPoint(), pawn.getLocation(), pawn.getChessColor(), clickController, CHESS_SIZE);
-        int x = pawn.getChessboardPoint().getX() ;
-        int y = pawn.getChessboardPoint().getY();
-        ChessComponent chessComponent2=new EmptySlotComponent(new ChessboardPoint(x, y), calculatePoint(x, y), clickController, CHESS_SIZE);
-        swapChessComponents(chessComponent2,pawn);
+        chessComponent.setVisible(true);
         putChessOnBoard(chessComponent);
     }
 
     public void pawnTranslateToKnight(PawnChessComponent pawn) {
+        remove(pawn);
         ChessComponent chessComponent = new KnightChessComponent(pawn.getChessboardPoint(), pawn.getLocation(), pawn.getChessColor(), clickController, CHESS_SIZE);
-        int x = pawn.getChessboardPoint().getX() ;
-        int y = pawn.getChessboardPoint().getY();
-        ChessComponent chessComponent2=new EmptySlotComponent(new ChessboardPoint(x, y), calculatePoint(x, y), clickController, CHESS_SIZE);
-        swapChessComponents(chessComponent2,pawn);
+        chessComponent.setVisible(true);
         putChessOnBoard(chessComponent);
     }
 
@@ -629,8 +625,7 @@ public class Chessboard extends JComponent {
                         if (whiteLose) {
                             ChessGameFrame.getInstance().gameOver(ChessColor.BLACK);
                         } else {
-                            blackKingAlertLabel.setVisible(true);
-                            return true;
+                            whiteKingAlertLabel.setVisible(true);
                         }
 
                     }
