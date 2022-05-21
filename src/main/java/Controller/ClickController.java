@@ -79,7 +79,6 @@ public class ClickController {
                     }
                 }
                 if (chessboard.getGameMode() != GameMode.PVP) {
-                    //TODO:: 底线升变时要延迟执行 以及游戏结束后就不要再行棋了
                     ChessGameFrame.getInstance().setActionButtonsEnabled(false);
                     Timer timer = new Timer(2000, e -> {
 
