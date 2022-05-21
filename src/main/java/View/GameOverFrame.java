@@ -47,6 +47,7 @@ public class GameOverFrame extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 SwingUtilities.invokeLater(() -> {
+                    dispose();
                     WelcomeFrame welcomeFrame = new WelcomeFrame();
                     welcomeFrame.setVisible(true);
                 });

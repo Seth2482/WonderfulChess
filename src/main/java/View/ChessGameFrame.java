@@ -249,5 +249,8 @@ public class ChessGameFrame extends JFrame {
         });
     }
 
+    public boolean isGameOver() {
+        return gameOver;
+    }
 }
 

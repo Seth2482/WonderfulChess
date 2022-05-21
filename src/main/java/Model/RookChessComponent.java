@@ -67,7 +67,7 @@ public class RookChessComponent extends ChessComponent {
     }
 
     public RookChessComponent(ChessboardPoint chessboardPoint, Point location, ChessColor chessColor, ClickController clickController, int size) {
-        this(chessboardPoint, location, chessColor, clickController, size, false, true);
+        this(chessboardPoint, location, chessColor, clickController, size, true, false);
     }
 
     /**
@@ -106,7 +106,7 @@ public class RookChessComponent extends ChessComponent {
     @Override
     public void swapLocation(ChessComponent another) {
         super.swapLocation(another);
-        hasMoved = false;
+        hasMoved = true;
     }
 
     public boolean isCanBeChangeKing() {

@@ -83,8 +83,10 @@ public class ClickController {
                     ChessGameFrame.getInstance().setActionButtonsEnabled(false);
                     Timer timer = new Timer(2000, e -> {
 
-                        chessboard.AIMove();
-                        ChessGameFrame.getInstance().setActionButtonsEnabled(true);
+                        if (!ChessGameFrame.getInstance().isGameOver()){
+                            chessboard.AIMove();
+                            ChessGameFrame.getInstance().setActionButtonsEnabled(true);
+                        }
                     });
                     timer.setRepeats(false);
                     timer.start();

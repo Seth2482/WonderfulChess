@@ -113,7 +113,6 @@ public class Chessboard extends JComponent {
         this.archive = archive;
 
         recoverFromArchive();
-//        scanTheChessboard();
     }
 
     public Chessboard(int width, int height, boolean inTest) {
@@ -385,6 +384,10 @@ public class Chessboard extends JComponent {
         boolean enabled = !archive.isEmpty();
         ChessGameFrame.getInstance().setSaveButtonEnabled(enabled);
         ChessGameFrame.getInstance().setRepentButtonEnabled(enabled);
+        SwingUtilities.invokeLater(() -> {
+            scanTheChessboard();
+            checkKingAttacked();
+        });
 
     }
 

@@ -1,5 +1,6 @@
 package Timer;
 
+import Model.GameMode;
 import View.Chessboard;
 
 import javax.swing.*;
@@ -36,11 +37,21 @@ public class ChessCountdown {
         updateCountdownLabel();
     }
 
-    public void trigger(){
+    public void trigger() {
         countdownTime--;
         updateCountdownLabel();
-        if (countdownTime <=0){
+        if (countdownTime <= 0) {
             Chessboard.getInstance().swapColor();
+            if (Chessboard.getInstance().getGameMode() != GameMode.PVP) {
+                Timer timer = new Timer(2000, new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        Chessboard.getInstance().AIMove();
+                    }
+                });
+                timer.setRepeats(false);
+                timer.start();
+            }
             startCount();
         }
     }

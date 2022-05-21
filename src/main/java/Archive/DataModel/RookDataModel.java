@@ -11,7 +11,7 @@ public class RookDataModel extends ChessDataModel {
     private boolean canBeChangeKing = true;
     private boolean hasMoved = false;
 
-    public RookDataModel(int x, int y, ChessColor chessColor, boolean canBeChangeKing, boolean hasMoved) {
+    public RookDataModel(int x, int y, ChessColor chessColor, boolean hasMoved, boolean canBeChangeKing) {
         super(x, y, chessColor);
         this.canBeChangeKing = canBeChangeKing;
         this.hasMoved = hasMoved;
