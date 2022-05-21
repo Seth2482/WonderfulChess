@@ -626,6 +626,7 @@ public class Chessboard extends JComponent {
                             ChessGameFrame.getInstance().gameOver(ChessColor.BLACK);
                         } else {
                             whiteKingAlertLabel.setVisible(true);
+                            return true;
                         }
 
                     }
