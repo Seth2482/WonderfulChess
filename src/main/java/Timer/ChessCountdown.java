@@ -40,7 +40,7 @@ public class ChessCountdown {
     public void trigger() {
         countdownTime--;
         updateCountdownLabel();
-        if (countdownTime <= 0) {
+        if (countdownTime < 0) {
             Chessboard.getInstance().swapColor();
             if (Chessboard.getInstance().getGameMode() != GameMode.PVP) {
                 Timer timer = new Timer(2000, new ActionListener() {
